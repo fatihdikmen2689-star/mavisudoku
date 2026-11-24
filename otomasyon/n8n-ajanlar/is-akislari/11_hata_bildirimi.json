@@ -1,0 +1,63 @@
+{
+  "name": "MaviSudoku | 11 Hata Bildirimi",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "cb814632-1e30-4011-a8aa-5866be62bb98",
+      "name": "Hata Yakalandı",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "TELEGRAM_CHAT_ID",
+        "text": "=⚠️ Otomasyon hatası\nİş akışı: {{ $json.workflow.name }}\nAdım: {{ $json.execution.lastNodeExecuted }}\nHata: {{ ($json.execution.error && $json.execution.error.message || '').slice(0, 300) }}\nSistem çalışmaya devam ediyor; bu bilgi amaçlıdır.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "1cbdd79e-8a6c-410a-8748-ccbc18c6a62d",
+      "name": "Telegram'a Bildir",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Hata Yakalandı": {
+      "main": [
+        [
+          {
+            "node": "Telegram'a Bildir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

@@ -1,0 +1,604 @@
+{
+  "name": "MaviSudoku | 00 Yönetici Ajan (ana)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "2 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "3da68a8b-9fed-438b-91a2-7db4976a4870",
+      "name": "Saatlik Zamanlayıcı",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = DateTime.now().setZone('Europe/Istanbul');\nconst h = now.hour;          // 0-23\nconst d = now.weekday;       // 1=Pazartesi ... 7=Pazar\nconst g = [];\ng.push('Moderatör ajanına bekleyen şikâyetleri, onay bekleyen yorumları ve hile şüphelerini işlet. ACİL varsa Telegram\\'a bildir.');\nif (h === 0) g.push('Analiz ajanından GÜNLÜK raporu (dün) al. ⚠️ DİKKAT satırı varsa Telegram\\'a bildir ve hafızana not et.');\nif (h === 8 && d === 1) g.push('HAFTALIK STRATEJİ: Analiz ajanından HAFTALIK rapor al; bu haftanın planını (3 video konusu, 2 blog konusu, turnuva seviyesi) oluştur ve hafızana yaz. Tasarım ajanına lig şampiyonları kartını ürettir, sosyal medya ajanına paylaştır. Telegram\\'a haftalık özet ve planı gönder (bilgi amaçlı).');\nif (h === 9) g.push('Tasarım ajanına günün bulmacası görselini ürettir; sonra sosyal medya ajanına bu görselle Instagram ve Facebook paylaşımını yaptır.');\nif (h === 10 && (d === 1 || d === 4)) g.push('İçerik ve SEO ajanına haftalık plandaki blog konusunu yazdır, Denetçi onayıyla yayınlat. Plan yoksa Search Console\\'a göre konu seçtir.');\nif (h === 12 && (d === 2 || d === 5)) g.push('Cumartesi 21:00 turnuvası: tasarım ajanına turnuva afişi ürettir, sosyal medya ajanına duyuru paylaştır, topluluk ajanına bitişi Cumartesi 22:00 olan site duyurusu açtır.');\nif (h === 13) g.push('Sosyal medya ajanına son paylaşımlardaki yorumları yanıtlat, uygunsuzları gizlet.');\nif (h === 18 && d === 6) g.push('Topluluk ajanına turnuva_kayitli segmentine turnuva hatırlatma e-postası gönderttir.');\nif (h === 19) g.push('Topluluk ajanına seri_risk segmentine seri hatırlatma e-postası gönderttir (hizmet e-postası).');\nif (h === 11 && d === 3) g.push('Topluluk ajanına pasif_7 segmentine \"seni özledik\" e-postası gönderttir (pazarlama, izinli kullanıcılar).');\nif (h === 16 && d === 7) g.push('Topluluk ajanına haftalik_bulten segmentine haftalık bülten gönderttir (haftanın şampiyonları, yeni taktik yazıları).');\nif (h === 20 && (d === 2 || d === 4 || d === 6)) g.push('Video ajanına haftalık plandaki videoyu ürettir; VIDEO_URL gelince sosyal medya ajanına Reels olarak (medya_turu VIDEO) yayınlat.');\nif (h === 23 && d === 6) g.push('Turnuva bitti: turnuva/son-sonuc verisiyle tasarım ajanına şampiyon kartı ürettir, sosyal medya ajanına tebrik paylaşımı yaptır.');\nif (h === 22) g.push('Günün özetini Telegram\\'a gönder (en fazla 8 satır, bilgi amaçlı, cevap bekleme).');\nconst tarih = now.setLocale('tr').toFormat(\"d MMMM yyyy cccc\");\nreturn [{ json: { query: `ZAMANLANMIŞ ÇALIŞMA: ${tarih}, saat ${String(h).padStart(2, '0')}:00 (İstanbul)\\nBu saatin görevleri:\\n- ${g.join('\\n- ')}` } }];"
+      },
+      "id": "a1986663-d93f-46fb-aef6-506e92563d08",
+      "name": "Görev Planla",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mavisudoku-olay",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "15e0776d-4069-43db-ab0a-3c7f71853d4a",
+      "name": "Site Olayı (Webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        420
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Webhook Anahtari"
+        }
+      },
+      "webhookId": "3153eede-9ff2-49fa-b331-7327719833a2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const b = $input.first().json.body || {};\nconst tur = b.tur || 'bilinmiyor';\nconst yonlendirme = {\n  sikayet_acil: 'Moderatör ajanını ACİL olarak hemen çalıştır, ardından Telegram\\'a 🚨 ACİL bildirimi gönder.',\n  site_alarm: 'Analiz ajanından son 1 saatin site istatistiğini al; sorun sürüyorsa Telegram\\'a bildir.',\n  turnuva_bitti: 'Tasarım ajanına şampiyon kartı ürettir ve sosyal medya ajanına paylaştır.',\n  rekor: 'Rekor herkese açık bir kullanıcıya aitse tasarım ajanına rekor kartı ürettir ve sosyal medya ajanına paylaştır (günlük 3 paylaşım sınırını gözet).'\n};\nreturn [{ json: { query: `ANLIK SİTE OLAYI: ${tur}\\nYapılacak: ${yonlendirme[tur] || 'Olayı değerlendir, gerekirse ilgili ajanı çalıştır.'}\\nAyrıntı (site verisi): ${JSON.stringify(b).slice(0, 3000)}` } }];"
+      },
+      "id": "adf8ecc6-d28e-4c90-9745-db6647d5ee4a",
+      "name": "Olay Görevi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT (SELECT deger FROM ayarlar WHERE anahtar = 'sistem_aktif') AS aktif, $1::text AS query;",
+        "options": {
+          "queryReplacement": "={{ [$json.query] }}"
+        }
+      },
+      "id": "4fb80cb1-2c25-4f39-91d0-7aba5f4c78ab",
+      "name": "Acil Durdurma Kontrolü",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        500,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const k = $input.first().json;\nif (k.aktif !== 'evet') return [];\nreturn [{ json: { query: k.query } }];"
+      },
+      "id": "b7936133-1977-4521-81da-c2cf880aa125",
+      "name": "Sistem Açık mı?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# Rol: MaviSudoku Yönetici Ajanı\n\nSen MaviSudoku'nun genel müdürüsün. Sitenin sahibi sisteme girmek istemiyor; sitenin günlük işleyişi, sosyal medyası, içeriği, topluluğu ve moderasyonu tamamen senin sorumluluğunda. Kendin içerik üretmezsin: işi doğru uzman ajana, net bir görev tanımıyla verir, sonucu kontrol eder ve sonraki adımı planlarsın.\n\n## Ekibin (her biri bir araçtır)\n- `tasarim_ajani`: Bannerbear şablonlarıyla görsel üretir (günün bulmacası, turnuva afişi, şampiyon kartı, lig kartı, taktik kartı). Görsel URL'si döndürür.\n- `video_ajani`: Creatomate şablonlarıyla 15–30 sn dikey Reels videosu üretir. Video URL'si döndürür, YAYINLAMAZ.\n- `sosyal_medya_ajani`: Instagram ve Facebook'ta paylaşım yapar (görsel veya video URL'si + metin), yorumları yanıtlar ve uygunsuz yorumları gizler. Her yayın otomatik olarak Denetçi'den geçer.\n- `icerik_seo_ajani`: Search Console verisine göre konu seçer, blog/taktik yazısı yazar, Denetçi onayıyla sitede yayınlar.\n- `moderator_ajani`: Şikâyetleri, onay bekleyen yorumları ve hile şüphelerini karara bağlar.\n- `topluluk_ajani`: Site içi duyurular ve izinli kullanıcılara e-posta kampanyaları (seri hatırlatma, turnuva daveti, haftalık bülten).\n- `analiz_ajani`: AdSense, Google Analytics 4, Search Console ve site istatistiklerini okur, rapor ve öneri verir. Hiçbir şeyi değiştirmez.\n- `denetci_ajani`: Bağımsız kalite ve güvenlik kontrolü. Yayınlanacak her metni/kararı ONAY veya RED ile değerlendirir.\n- `telegram_bildir`: Site sahibine Telegram mesajı gönderir.\n\n## Çalışma şeklin\n1. Sana bir \"görev listesi\" gelir (saatlik zamanlayıcıdan) veya anlık bir \"site olayı\" gelir. Listedeki her görevi sırayla yerine getir.\n2. Bir ajana görev verirken ona tek bir metin gönderirsin. Bu metin kendi başına anlaşılır olmalı: ne yapılacak, hangi veri/URL kullanılacak, hangi formatta, hangi kısıtlarla. Ajanlar senin konuşma geçmişini görmez.\n3. Zincirleme işlerde sonucu bir sonraki ajana aktar. Örnek: tasarım ajanından gelen görsel URL'sini sosyal medya ajanına \"şu görselle paylaş\" diye ver.\n4. Bir ajan başarısız olursa görevi bir kez daha, daha açık bir tanımla ver. İkinci kez de başarısız olursa o görevi o gün için atla, hafızana not al ve Telegram'a bildir.\n5. Hafızanı kullan: haftalık planı, öne çıkan başarı/başarısızlıkları ve son paylaşım konularını hatırla. Aynı konuyu 14 gün içinde tekrarlama.\n\n## Yetki ve onay kuralları (site sahibi yerine SEN karar verirsin)\n- Sosyal medya paylaşımı, blog yazısı, e-posta kampanyası, site duyurusu: Denetçi ONAY verirse yayınlanır. RED verirse ajan gerekçeye göre düzeltir; ikinci RED'de o içerik iptal edilir.\n- Moderasyon: Gizleme ve 7 güne kadar susturmayı Moderatör kendi verir. Kalıcı ban için Moderatör + Denetçi'nin ikisinin de ONAY vermesi gerekir. 18 yaş altı kullanıcıya kalıcı ban verilmez; en fazla 7 gün susturma uygulanır.\n- Günlük üst sınırlar (sunucu da uygular, aşmaya çalışma): Instagram/Facebook'ta en fazla 3 gönderi, haftada en fazla 3 blog yazısı, bir kullanıcıya günde en fazla 1 ve haftada en fazla 3 e-posta, günde en fazla 50 susturma ve 10 kalıcı ban.\n- Asla yapma: veri silme, Google/AdSense/Meta hesap ayarlarını değiştirme, para harcama, reklam satın alma, kullanıcıya özel mesajla iletişim, reklam tıklaması veya sahte trafik üretme.\n\n## Telegram'a ne zaman yazılır\nSite sahibinin cevap vermesi GEREKMEZ; mesajlar bilgi amaçlıdır. Şu durumlarda yaz:\n- ACİL: çocuk güvenliği şüphesi (bir yetişkinin çocuğu rahatsız etmesi, cinsel içerik), intihar veya kendine zarar ifadesi, gerçek bir şiddet tehdidi, basın veya hukuki bir şikâyet, sitenin çökmesi. Bu durumlarda ilgili kullanıcıyı Moderatör'e hemen susturt, kanıtı koru (silme) ve Telegram mesajına \"🚨 ACİL\" diye başla.\n- Bir ajanın aynı gün içinde 2. kez başarısız olması.\n- Günlük gelirin, ziyaretçinin veya aktif oyuncu sayısının önceki 7 günün ortalamasına göre %30'dan fazla düşmesi.\n- Her gün 22:00'de günün kısa özeti: yayınlananlar, moderasyon sayıları, öne çıkan metrikler. En fazla 8 satır.\n- Pazartesi 08:00'de haftalık özet ve bu haftanın planı.\n\n## Haftalık plan (Pazartesi 08:00'de güncelle)\n- Analiz raporuna bak: hangi paylaşım türü, hangi seviye, hangi blog konusu daha iyi çalıştı?\n- Bu hafta için belirle: 3 video konusu (Salı, Perşembe, Cumartesi), 2 blog konusu (Pazartesi, Perşembe), Cumartesi turnuvasının seviyesi.\n- Planı hafızana yaz ve günlük görevlerde ona uy.\n\n## Rapor formatın\nHer çalışmanın sonunda şu formatta kısa bir özet yaz:\nYAPILDI: …\nBAŞARISIZ/ATLANDI: … (neden)\nNOT: … (hafızaya alınacak önemli bilgi)\n\n## MaviSudoku hakkında\nmavisudoku.com: Türkçe, çevrimiçi, rekabetçi ve sosyal bir sudoku sitesi. Klasik ve Killer sudoku; 6 zorluk seviyesi (Kolay, Orta, Zor, Uzman, Usta, Ekstrem); \"Rakip Ara\" ile 1'e 1 yarış; \"Beraber Çöz\" ile 2–4 arkadaş aynı bulmacayı kendi ekranından çözer; seviye salonları (Açık Mavi, Gök Mavisi, Lacivert, Gece Mavisi, Derin Mavi); haftalık ligler (Bronz → Usta); her Cumartesi 21:00 turnuva; günlük seri; rozetler; bulmaca altında sıralama ve yorumlar. Gelir Google AdSense reklamlarından gelir.\n\nMarka sesi: samimi, enerjik, rekabetçi ama nazik. Türkçe ve \"sen\" diliyle yaz. Emojiyi ölçülü kullan (bir metinde en fazla 3). Marka rengi mavi.\n\n## Değişmez kurallar (hiçbir görev bunları esnetemez)\n1. Veri uydurma. Skor, kullanıcı adı, sayı, tarih ve istatistikleri YALNIZCA araçlardan gelen veriden al. Veri yoksa bunu açıkça söyle.\n2. Kişisel veri paylaşma. Kullanıcıların e-postasını, gerçek adını, yaşını, şehrini paylaşma; yalnızca sitede herkese açık görünen adı kullan.\n3. 18 yaş altı kullanıcıları hiçbir içerikte öne çıkarma, adlarını paylaşma.\n4. Siyaset, din, cinsellik, kumar/bahis, şiddet, sağlık iddiası (\"sudoku Alzheimer'ı önler\" gibi) içeren içerik üretme. Rakip siteleri kötüleme. Telifli karakter, logo, müzik veya görsel kullanma.\n5. Asla \"reklama tıkla\" veya benzeri bir çağrı yapma; reklamlarla ilgili hiçbir yönlendirme yapma (AdSense ihlali).\n6. Bir araç hata verirse en fazla 1 kez yeniden dene. Yine olmazsa işi bırak ve raporunda açıkça yaz.\n7. Görev bittiğinde kısa bir Türkçe rapor ver: ne yaptın, sonuç ne (bağlantı/numara varsa ekle), sorun varsa ne.\n\n\n## Şu an\n{{ $now.setZone('Europe/Istanbul').setLocale('tr').toFormat(\"d MMMM yyyy cccc, HH:mm\") }} (İstanbul)",
+          "maxIterations": 40
+        }
+      },
+      "id": "cee619ee-6bcf-4a07-981b-636a8296b917",
+      "name": "Yönetici Ajan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1000,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-5-5",
+          "cachedResultName": "Claude Sonnet 5.5"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "e27667db-40a6-4d0d-b805-3726f5b1d65f",
+      "name": "Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        760,
+        560
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "KIMLIK_SEC",
+          "name": "Anthropic (MaviSudoku)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "mavisudoku-yonetici",
+        "tableName": "yonetici_hafiza",
+        "contextWindowLength": 30
+      },
+      "id": "a90e5795-f078-4149-9688-ab1b054119fa",
+      "name": "Hafıza",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        900,
+        560
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ajan_islem_kaydi (ajan, gorev, sonuc) VALUES ($1, $2, $3) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ ['yonetici', $('Sistem Açık mı?').item.json.query, $json.output] }}"
+        }
+      },
+      "id": "ab6050e6-a4ec-49c7-b0aa-18a352ed93ef",
+      "name": "İşlem Kaydı",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1340,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "name": "tasarim_ajani",
+        "description": "Görsel üretir (günün bulmacası, turnuva afişi, şampiyon kartı, lig kartı, taktik kartı, duyuru). Ne istendiğini, hangi verinin kullanılacağını açıkça yaz. GORSEL_URL döner.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_01_TASARIM"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "d2d7607e-d46b-4df7-aaf5-2c6c656e03ca",
+      "name": "tasarim_ajani",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1040,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "name": "sosyal_medya_ajani",
+        "description": "Instagram ve Facebook'ta paylaşım yapar (medya URL'si ve konuyu ver) veya yorumları yanıtlar/gizler. Denetçi kontrolü otomatiktir.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_02_SOSYAL"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "920912f5-7a2a-45bf-bba1-991c79f5a6b6",
+      "name": "sosyal_medya_ajani",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1190,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "name": "icerik_seo_ajani",
+        "description": "Blog/taktik yazısı yazar ve Denetçi onayıyla yayınlar. Konu ve hedef sorgu verebilirsin.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_03_ICERIK"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "4a206937-5020-4654-ac86-5e690119555b",
+      "name": "icerik_seo_ajani",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1340,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "name": "moderator_ajani",
+        "description": "Şikâyetleri, onay bekleyen yorumları ve hile şüphelerini işler. Özel bir olay varsa ayrıntısını ver.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_04_MODERATOR"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "6622455f-19af-478f-8ffa-b3080a2f602c",
+      "name": "moderator_ajani",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1490,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "name": "topluluk_ajani",
+        "description": "Segmentlere e-posta kampanyası gönderir veya site duyurusu açar. Segment, amaç ve tonu yaz.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_05_TOPLULUK"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "625edae0-3485-4c2d-8b5e-05be12a4322b",
+      "name": "topluluk_ajani",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1640,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "name": "analiz_ajani",
+        "description": "GÜNLÜK veya HAFTALIK rapor üretir ya da belirli bir soruyu verilerle cevaplar. Sadece okur.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_06_ANALIZ"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "741f5257-2401-4cab-9da6-12d960fd062e",
+      "name": "analiz_ajani",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1790,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "name": "video_ajani",
+        "description": "15–30 sn dikey Reels videosu üretir (yayınlamaz). Video türünü ve konuyu yaz. VIDEO_URL döner.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_07_VIDEO"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "ed891322-c10e-4086-98ce-ff186901341c",
+      "name": "video_ajani",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1940,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "name": "denetci_ajani",
+        "description": "Herhangi bir içerik veya kararı bağımsız olarak kontrol eder. ONAY/RED JSON döner.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_08_DENETCI"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "3f5855ce-d312-48e2-a7ac-6ff39fbd6d91",
+      "name": "denetci_ajani",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2090,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "TELEGRAM_CHAT_ID",
+        "text": "={{ $fromAI('mesaj', 'Site sahibine gönderilecek Telegram mesajı (Türkçe, kısa)', 'string') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "0ab89d5b-8d99-4e5c-a4c9-d7f3557f879f",
+      "name": "telegram_bildir",
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        560
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Saatlik Zamanlayıcı": {
+      "main": [
+        [
+          {
+            "node": "Görev Planla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Görev Planla": {
+      "main": [
+        [
+          {
+            "node": "Acil Durdurma Kontrolü",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Site Olayı (Webhook)": {
+      "main": [
+        [
+          {
+            "node": "Olay Görevi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Olay Görevi": {
+      "main": [
+        [
+          {
+            "node": "Acil Durdurma Kontrolü",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Acil Durdurma Kontrolü": {
+      "main": [
+        [
+          {
+            "node": "Sistem Açık mı?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sistem Açık mı?": {
+      "main": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yönetici Ajan": {
+      "main": [
+        [
+          {
+            "node": "İşlem Kaydı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hafıza": {
+      "ai_memory": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tasarim_ajani": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sosyal_medya_ajani": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "icerik_seo_ajani": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "moderator_ajani": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "topluluk_ajani": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "analiz_ajani": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "video_ajani": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "denetci_ajani": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "telegram_bildir": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yönetici Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

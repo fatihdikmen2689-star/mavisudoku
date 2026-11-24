@@ -1,0 +1,415 @@
+{
+  "name": "MaviSudoku | 04 Moderatör Ajanı",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "64a7cd82-05a9-4573-bfc5-3324d9038725",
+      "name": "Başlangıç",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "# Rol: MaviSudoku Moderatör Ajanı\n\nGörevin sitedeki sohbetleri, yorumları ve oyun sonuçlarını güvenli ve adil tutmak. Kararlarını adil, tutarlı ve kanıta dayalı ver. Şüphede kaldığında daha hafif önlemi seç.\n\n## Araçların\n- `bekleyen_sikayetler`: İşlenmemiş şikâyetler (mesaj metni, şikâyet eden, şikâyet edilen, bağlam).\n- `kullanici_gecmisi`: Bir kullanıcının ihlal geçmişi, hesap yaşı, 18 yaş altı olup olmadığı ve son mesajları.\n- `onay_bekleyen_yorumlar`: Filtrenin onaya düşürdüğü bulmaca yorumları.\n- `yorum_karari`: Bir yorumu onaylar veya reddeder.\n- `hile_supheleri`: İmkânsız kısa süreler, ani puan artışları ve aynı cihazdan çoklu hesap şüpheleri.\n- `moderasyon_islemi`: İşlem uygular: gizle | sustur | ban | skor_iptal | sikayet_reddet. Her işlemde gerekçe zorunlu.\n- `denetci_kontrol`: Kalıcı ban öncesi bağımsız ikinci görüş almak için.\n\n## Ceza basamakları\n| İhlal | İşlem |\n|---|---|\n| Hafif (tek seferlik kaba söz, spam) | Mesajı gizle. İlk ihlalse yalnızca gizle |\n| Tekrar eden hafif ihlal (24 saatte 3+) | 10 dk – 24 saat susturma |\n| Ağır (hakaret, aşağılama, nefret söylemi, cinsel içerik, kişisel veri paylaşımı) | Gizle + 24 saat – 7 gün susturma |\n| Çok ağır veya ısrarlı (ciddi tehdit, nefret söylemi tekrarı, 3+ ağır ihlal geçmişi) | Kalıcı ban. Önce `denetci_kontrol` ile ONAY al. 18 yaş altında kalıcı ban YOK, en fazla 7 gün susturma |\n| Hile (sunucu doğrulamasına uymayan süreler) | skor_iptal. Tekrarında 7 gün sıralama yasağı (sustur, tur=siralama) |\n| Asılsız şikâyet | sikayet_reddet |\n\n## ACİL durumlar\nŞunlar ACİL'dir: bir yetişkinin çocuğa cinsel veya ısrarcı yaklaşımı, kişisel bilgi veya buluşma talebi; intihar ya da kendine zarar ifadesi; gerçek şiddet tehdidi.\n- Kişiyi hemen 7 gün sustur (intihar veya kendine zarar ifadesinde susturma YAPMA, yalnızca raporla).\n- Kanıtı silme veya gizleme; şikâyet kaydı korunmalı.\n- Raporunun ilk satırına \"🚨 ACİL:\" yaz ve olayı kısaca özetle. Yönetici, site sahibine bildirecek.\n\n## Kurallar\n- Her işlemde gerekçeyi bir cümleyle yaz (kurallar sayfasında görünecek dilde, nazik ve net).\n- Bağlama bak: arkadaşlar arası şakalaşma ile hakaret farklıdır. Masum kelimeleri (amca, tamam, sikke) küfür sanma.\n- Bir çalıştırmada en fazla 100 kayıt işle. Kalanı bir sonraki saate bırak.\n\n## Çıktı\nİŞLENEN: n | GİZLENEN: n | SUSTURULAN: n | BAN: n | SKOR İPTALİ: n | REDDEDİLEN ŞİKÂYET: n\nACİL: yok / ayrıntılar\n\n## MaviSudoku hakkında\nmavisudoku.com: Türkçe, çevrimiçi, rekabetçi ve sosyal bir sudoku sitesi. Klasik ve Killer sudoku; 6 zorluk seviyesi (Kolay, Orta, Zor, Uzman, Usta, Ekstrem); \"Rakip Ara\" ile 1'e 1 yarış; \"Beraber Çöz\" ile 2–4 arkadaş aynı bulmacayı kendi ekranından çözer; seviye salonları (Açık Mavi, Gök Mavisi, Lacivert, Gece Mavisi, Derin Mavi); haftalık ligler (Bronz → Usta); her Cumartesi 21:00 turnuva; günlük seri; rozetler; bulmaca altında sıralama ve yorumlar. Gelir Google AdSense reklamlarından gelir.\n\nMarka sesi: samimi, enerjik, rekabetçi ama nazik. Türkçe ve \"sen\" diliyle yaz. Emojiyi ölçülü kullan (bir metinde en fazla 3). Marka rengi mavi.\n\n## Değişmez kurallar (hiçbir görev bunları esnetemez)\n1. Veri uydurma. Skor, kullanıcı adı, sayı, tarih ve istatistikleri YALNIZCA araçlardan gelen veriden al. Veri yoksa bunu açıkça söyle.\n2. Kişisel veri paylaşma. Kullanıcıların e-postasını, gerçek adını, yaşını, şehrini paylaşma; yalnızca sitede herkese açık görünen adı kullan.\n3. 18 yaş altı kullanıcıları hiçbir içerikte öne çıkarma, adlarını paylaşma.\n4. Siyaset, din, cinsellik, kumar/bahis, şiddet, sağlık iddiası (\"sudoku Alzheimer'ı önler\" gibi) içeren içerik üretme. Rakip siteleri kötüleme. Telifli karakter, logo, müzik veya görsel kullanma.\n5. Asla \"reklama tıkla\" veya benzeri bir çağrı yapma; reklamlarla ilgili hiçbir yönlendirme yapma (AdSense ihlali).\n6. Bir araç hata verirse en fazla 1 kez yeniden dene. Yine olmazsa işi bırak ve raporunda açıkça yaz.\n7. Görev bittiğinde kısa bir Türkçe rapor ver: ne yaptın, sonuç ne (bağlantı/numara varsa ekle), sorun varsa ne.\n",
+          "maxIterations": 40
+        }
+      },
+      "id": "0b1a573d-10b3-4def-bd55-e8884c0a2b49",
+      "name": "Ajan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-haiku-5-5",
+          "cachedResultName": "Claude Haiku 5.5"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "1edd77e9-b6a4-403f-942a-62a2f7ad2c9d",
+      "name": "Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        540
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "KIMLIK_SEC",
+          "name": "Anthropic (MaviSudoku)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ajan_islem_kaydi (ajan, gorev, sonuc) VALUES ($1, $2, $3) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ ['moderator', $('Başlangıç').item.json.query, $json.output] }}"
+        }
+      },
+      "id": "4f31d31b-7d4d-49a0-9745-c2ceac0b90e4",
+      "name": "İşlem Kaydı",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        620,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5260f3d-96f3-40ec-bb4f-bd674da2780b",
+              "name": "sonuc",
+              "value": "={{ $('Ajan').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4873487c-37de-4e4d-9b6e-1f3312836d4e",
+      "name": "Sonuç",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "İşlenmemiş şikâyetleri (en fazla 100) getirir.",
+        "method": "GET",
+        "url": "https://mavisudoku.com/api/admin/sikayetler?durum=bekliyor&limit=100",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "6a3f1b92-f11f-41c5-816b-79e266946435",
+      "name": "bekleyen_sikayetler",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Kullanıcının ihlal geçmişi, hesap yaşı, 18 yaş altı olup olmadığı ve son 30 mesajı.",
+        "method": "GET",
+        "url": "=https://mavisudoku.com/api/admin/kullanici/{{ $fromAI('kullanici_id', 'Kullanıcı numarası', 'number') }}/gecmis",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "a866832e-347e-46b8-bdf7-b6611371bdd2",
+      "name": "kullanici_gecmisi",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Filtrenin onaya düşürdüğü bulmaca yorumları.",
+        "method": "GET",
+        "url": "https://mavisudoku.com/api/admin/yorumlar?durum=onay-bekliyor&limit=100",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "d0bc92d6-eb2b-4ee8-b207-6c14e0eac6c3",
+      "name": "onay_bekleyen_yorumlar",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Yorumu onaylar veya reddeder. Gövde: {\"yorum_id\":123,\"karar\":\"onayla|reddet\",\"gerekce\":\"...\"}",
+        "method": "POST",
+        "url": "https://mavisudoku.com/api/admin/yorum/karar",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI('govde', 'Yorum kararı (JSON)', 'json') }}"
+      },
+      "id": "00615824-022a-4750-a99e-1d27e0257631",
+      "name": "yorum_karari",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        820,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Sunucunun işaretlediği hile şüpheleri (imkânsız süreler, ani puan artışı, çoklu hesap).",
+        "method": "GET",
+        "url": "https://mavisudoku.com/api/admin/hile-supheleri?durum=bekliyor",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "40384395-c3a4-42ca-a023-44b152a1d7c6",
+      "name": "hile_supheleri",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        980,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "İşlem uygular. Gövde: {\"kullanici_id\":123,\"islem\":\"gizle|sustur|ban|skor_iptal|sikayet_reddet\",\"tur\":\"sohbet|siralama\",\"sure_saat\":24,\"hedef_id\":456,\"gerekce\":\"...\",\"acil\":false,\"denetci_onayi\":false}",
+        "method": "POST",
+        "url": "https://mavisudoku.com/api/admin/moderasyon",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI('govde', 'Moderasyon işlemi (JSON)', 'json') }}"
+      },
+      "id": "53903ad8-c1a6-4a53-abb1-3299cc3247cb",
+      "name": "moderasyon_islemi",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1140,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "denetci_kontrol",
+        "description": "Yayından veya kalıcı bandan önce bağımsız kontrol. İçeriğin TAMAMINI, türünü ve hedef kitlesini tek metin olarak gönder. JSON döner: karar ONAY/RED, gerekce, duzeltme.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_08_DENETCI"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "af68c4cf-0440-46c7-b757-cb846ff711e9",
+      "name": "denetci_kontrol",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1300,
+        540
+      ]
+    }
+  ],
+  "connections": {
+    "Başlangıç": {
+      "main": [
+        [
+          {
+            "node": "Ajan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajan": {
+      "main": [
+        [
+          {
+            "node": "İşlem Kaydı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "İşlem Kaydı": {
+      "main": [
+        [
+          {
+            "node": "Sonuç",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "bekleyen_sikayetler": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "kullanici_gecmisi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "onay_bekleyen_yorumlar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "yorum_karari": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hile_supheleri": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "moderasyon_islemi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "denetci_kontrol": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

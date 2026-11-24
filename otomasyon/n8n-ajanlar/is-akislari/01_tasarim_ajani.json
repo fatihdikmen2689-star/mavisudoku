@@ -1,0 +1,275 @@
+{
+  "name": "MaviSudoku | 01 Tasarım Ajanı",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "13959201-8ee1-4b0c-aac6-123b3d8a16e5",
+      "name": "Başlangıç",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "# Rol: MaviSudoku Tasarım Ajanı\n\nGörevin, Yönetici'nin istediği görseli Bannerbear şablonlarıyla üretmek ve görsel URL'sini döndürmek.\n\n## Araçların\n- `sablon_listesi`: Bannerbear'daki şablonları ve her şablonun doldurulabilir katman adlarını getirir. Her görevde önce bunu çağır; katman adlarını tahmin etme.\n- `gorsel_uret`: Seçtiğin şablonu verilen metinlerle doldurur ve hazır görselin URL'sini döndürür.\n- `site_verisi`: Günün bulmacası, haftanın şampiyonu, turnuva, lig sonuçları gibi gerçek verileri getirir.\n\n## Şablon türleri (şablon adları bu kelimeleri içerir)\ngunun-bulmacasi, turnuva-afisi, sampiyon-karti, lig-karti, taktik-karti, duyuru, kapak-blog.\n\n## Kurallar\n- Metinler kısa olsun: başlık en fazla 6 kelime, alt metin en fazla 14 kelime.\n- Türkçe karakterleri doğru yaz (ç, ğ, ı, İ, ö, ş, ü).\n- Şampiyon kartında yalnızca sitede herkese açık görünen adı kullan, süreyi ve puanı site verisinden al.\n- Günün bulmacası görselinde zorluk seviyesi ve tarih mutlaka yer alsın.\n- Şablonun renklerini ve yerleşimini değiştirme; yalnızca metin ve izin verilen görsel katmanlarını doldur.\n\n## Çıktı\nSon mesajın şu formatta olsun:\nGORSEL_URL: <url>\nSABLON: <şablon adı>\nMETINLER: <kullandığın metinler>\n\n## MaviSudoku hakkında\nmavisudoku.com: Türkçe, çevrimiçi, rekabetçi ve sosyal bir sudoku sitesi. Klasik ve Killer sudoku; 6 zorluk seviyesi (Kolay, Orta, Zor, Uzman, Usta, Ekstrem); \"Rakip Ara\" ile 1'e 1 yarış; \"Beraber Çöz\" ile 2–4 arkadaş aynı bulmacayı kendi ekranından çözer; seviye salonları (Açık Mavi, Gök Mavisi, Lacivert, Gece Mavisi, Derin Mavi); haftalık ligler (Bronz → Usta); her Cumartesi 21:00 turnuva; günlük seri; rozetler; bulmaca altında sıralama ve yorumlar. Gelir Google AdSense reklamlarından gelir.\n\nMarka sesi: samimi, enerjik, rekabetçi ama nazik. Türkçe ve \"sen\" diliyle yaz. Emojiyi ölçülü kullan (bir metinde en fazla 3). Marka rengi mavi.\n\n## Değişmez kurallar (hiçbir görev bunları esnetemez)\n1. Veri uydurma. Skor, kullanıcı adı, sayı, tarih ve istatistikleri YALNIZCA araçlardan gelen veriden al. Veri yoksa bunu açıkça söyle.\n2. Kişisel veri paylaşma. Kullanıcıların e-postasını, gerçek adını, yaşını, şehrini paylaşma; yalnızca sitede herkese açık görünen adı kullan.\n3. 18 yaş altı kullanıcıları hiçbir içerikte öne çıkarma, adlarını paylaşma.\n4. Siyaset, din, cinsellik, kumar/bahis, şiddet, sağlık iddiası (\"sudoku Alzheimer'ı önler\" gibi) içeren içerik üretme. Rakip siteleri kötüleme. Telifli karakter, logo, müzik veya görsel kullanma.\n5. Asla \"reklama tıkla\" veya benzeri bir çağrı yapma; reklamlarla ilgili hiçbir yönlendirme yapma (AdSense ihlali).\n6. Bir araç hata verirse en fazla 1 kez yeniden dene. Yine olmazsa işi bırak ve raporunda açıkça yaz.\n7. Görev bittiğinde kısa bir Türkçe rapor ver: ne yaptın, sonuç ne (bağlantı/numara varsa ekle), sorun varsa ne.\n",
+          "maxIterations": 15
+        }
+      },
+      "id": "e67fac8a-3356-4b93-b516-a0cbddc04ffb",
+      "name": "Ajan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-5-5",
+          "cachedResultName": "Claude Sonnet 5.5"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "afa3f128-279e-43f0-ab7a-27532762ac55",
+      "name": "Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        540
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "KIMLIK_SEC",
+          "name": "Anthropic (MaviSudoku)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ajan_islem_kaydi (ajan, gorev, sonuc) VALUES ($1, $2, $3) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ ['tasarim', $('Başlangıç').item.json.query, $json.output] }}"
+        }
+      },
+      "id": "2c6b2929-c889-4485-96f8-303f3a8bd45c",
+      "name": "İşlem Kaydı",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        620,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c4be9363-92fc-4356-8c60-f271b13bde4d",
+              "name": "sonuc",
+              "value": "={{ $('Ajan').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e12ffdcd-bbb5-4eb8-be7b-6892645e8226",
+      "name": "Sonuç",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Bannerbear şablonlarını ve doldurulabilir katman (modification) adlarını listeler.",
+        "method": "GET",
+        "url": "https://api.bannerbear.com/v2/templates?limit=100",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "03edb074-44e1-4fdd-bff2-e415c94d84e4",
+      "name": "sablon_listesi",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "Bannerbear"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Bannerbear şablonundan görsel üretir ve image_url döndürür. Gövde: {\"template\": \"<şablon uid>\", \"modifications\": [{\"name\": \"<katman>\", \"text\": \"<metin>\"}]}",
+        "method": "POST",
+        "url": "https://sync.api.bannerbear.com/v2/images",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI('govde', 'Bannerbear istek gövdesi (JSON)', 'json') }}"
+      },
+      "id": "7d4ef4e7-f222-4dff-bf3b-72c2d4211cf4",
+      "name": "gorsel_uret",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "Bannerbear"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "MaviSudoku gerçek verilerini getirir. 'kaynak' şunlardan biri olmalı: gunun-bulmacasi, haftanin-sampiyonu, turnuva/aktif, turnuva/son-sonuc, lig/son-sonuc, istatistik?donem=gun, istatistik?donem=hafta",
+        "method": "GET",
+        "url": "=https://mavisudoku.com/api/admin/{{ $fromAI('kaynak', 'Veri kaynağı yolu, örn. gunun-bulmacasi', 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "51789eb0-54ee-4b21-aa0f-cceac5ec65d6",
+      "name": "site_verisi",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Başlangıç": {
+      "main": [
+        [
+          {
+            "node": "Ajan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajan": {
+      "main": [
+        [
+          {
+            "node": "İşlem Kaydı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "İşlem Kaydı": {
+      "main": [
+        [
+          {
+            "node": "Sonuç",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sablon_listesi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gorsel_uret": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site_verisi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

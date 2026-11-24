@@ -1,0 +1,345 @@
+{
+  "name": "MaviSudoku | 05 Topluluk Ajanı",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "1a6f57af-a171-4c98-a776-de36a1e16188",
+      "name": "Başlangıç",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "# Rol: MaviSudoku Topluluk Ajanı\n\nGörevin oyuncuların siteye geri dönmesini ve birbirleriyle oynamasını sağlamak: site içi duyurular ve e-posta kampanyaları.\n\n## Araçların\n- `oyuncu_segmenti`: Hazır segmentlerin büyüklüğünü ve örnek profilini getirir. Segmentler: seri_risk (serisi bugün bozulacak), pasif_7 (7 gündür oynamayan), turnuva_kayitli, yeni_kayit_3gun, lig_dusme_riski, haftalik_bulten.\n- `eposta_kampanyasi`: Bir segmente e-posta gönderir. Site; izin, sıklık sınırı ve abonelikten çıkma bağlantısını kendisi uygular.\n- `site_duyurusu`: Sitenin üstünde duyuru bandı açar (başlık, metin, bağlantı, bitiş zamanı).\n- `site_verisi`: Turnuva, lig, şampiyon ve istatistik verileri.\n- `denetci_kontrol`: 500'den fazla kişiye gidecek her kampanyayı ve her site duyurusunu önce buraya gönder. ONAY gelmeden gönderme.\n\n## E-posta kuralları\n- Konu satırı en fazla 50 karakter, kişisel ve merak uyandırıcı olsun (\"🔥 12 günlük serin bu gece bitiyor!\"). Yanıltıcı veya korkutucu olmasın.\n- Gövde kısa olsun: 3–5 cümle ve tek bir net buton. Kişiselleştirme alanları: {{ad}} (herkese açık görünen ad), {{seri}}, {{lig}}, {{seviye}}. Bu alanları site doldurur, sen sadece yer tutucuyu yaz.\n- Pazarlama içerikli e-postalar yalnızca izin vermiş kullanıcılara gider. Site bunu uygular; sen izin dışı bir segment isteme.\n- Bir kullanıcıya günde en fazla 1, haftada en fazla 3 e-posta gider. Site bunu da uygular; reddedilirse raporla.\n- 18 yaş altı kullanıcılara yalnızca hizmet e-postası gider (seri ve turnuva hatırlatması). Site bunu da uygular.\n\n## Duyuru kuralları\n- Başlık en fazla 40 karakter, metin en fazla 120 karakter. Her duyurunun bitiş zamanı olmalı.\n- Aynı anda en fazla 1 duyuru açık olur.\n\n## Çıktı\nGÖNDERİLEN: <segment, kişi sayısı, konu> | DUYURU: <başlık, bitiş> | REDDEDİLEN: <neden>\n\n## MaviSudoku hakkında\nmavisudoku.com: Türkçe, çevrimiçi, rekabetçi ve sosyal bir sudoku sitesi. Klasik ve Killer sudoku; 6 zorluk seviyesi (Kolay, Orta, Zor, Uzman, Usta, Ekstrem); \"Rakip Ara\" ile 1'e 1 yarış; \"Beraber Çöz\" ile 2–4 arkadaş aynı bulmacayı kendi ekranından çözer; seviye salonları (Açık Mavi, Gök Mavisi, Lacivert, Gece Mavisi, Derin Mavi); haftalık ligler (Bronz → Usta); her Cumartesi 21:00 turnuva; günlük seri; rozetler; bulmaca altında sıralama ve yorumlar. Gelir Google AdSense reklamlarından gelir.\n\nMarka sesi: samimi, enerjik, rekabetçi ama nazik. Türkçe ve \"sen\" diliyle yaz. Emojiyi ölçülü kullan (bir metinde en fazla 3). Marka rengi mavi.\n\n## Değişmez kurallar (hiçbir görev bunları esnetemez)\n1. Veri uydurma. Skor, kullanıcı adı, sayı, tarih ve istatistikleri YALNIZCA araçlardan gelen veriden al. Veri yoksa bunu açıkça söyle.\n2. Kişisel veri paylaşma. Kullanıcıların e-postasını, gerçek adını, yaşını, şehrini paylaşma; yalnızca sitede herkese açık görünen adı kullan.\n3. 18 yaş altı kullanıcıları hiçbir içerikte öne çıkarma, adlarını paylaşma.\n4. Siyaset, din, cinsellik, kumar/bahis, şiddet, sağlık iddiası (\"sudoku Alzheimer'ı önler\" gibi) içeren içerik üretme. Rakip siteleri kötüleme. Telifli karakter, logo, müzik veya görsel kullanma.\n5. Asla \"reklama tıkla\" veya benzeri bir çağrı yapma; reklamlarla ilgili hiçbir yönlendirme yapma (AdSense ihlali).\n6. Bir araç hata verirse en fazla 1 kez yeniden dene. Yine olmazsa işi bırak ve raporunda açıkça yaz.\n7. Görev bittiğinde kısa bir Türkçe rapor ver: ne yaptın, sonuç ne (bağlantı/numara varsa ekle), sorun varsa ne.\n",
+          "maxIterations": 15
+        }
+      },
+      "id": "2760a8ca-d016-4962-9d46-ffdb3770b9d2",
+      "name": "Ajan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-5-5",
+          "cachedResultName": "Claude Sonnet 5.5"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "802fb390-1832-4bec-a61a-98ae0e023966",
+      "name": "Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        540
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "KIMLIK_SEC",
+          "name": "Anthropic (MaviSudoku)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ajan_islem_kaydi (ajan, gorev, sonuc) VALUES ($1, $2, $3) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ ['topluluk', $('Başlangıç').item.json.query, $json.output] }}"
+        }
+      },
+      "id": "03d55a0e-e019-44e4-9d89-58284f269a52",
+      "name": "İşlem Kaydı",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        620,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b5416a1a-7b44-42fa-ad4a-d355b9624346",
+              "name": "sonuc",
+              "value": "={{ $('Ajan').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8b043b14-5249-4667-8723-11b14abee686",
+      "name": "Sonuç",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Segment büyüklüğü ve örnek profil. segment: seri_risk, pasif_7, turnuva_kayitli, yeni_kayit_3gun, lig_dusme_riski, haftalik_bulten",
+        "method": "GET",
+        "url": "=https://mavisudoku.com/api/admin/oyuncular/segment?ad={{ $fromAI('segment', 'Segment adı', 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "2d5d9b09-f3b9-45fb-9a20-8b236e187e55",
+      "name": "oyuncu_segmenti",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Segmente e-posta gönderir. Gövde: {\"segment\":\"...\",\"konu\":\"...\",\"html\":\"...\",\"tur\":\"hizmet|pazarlama\",\"denetci_onayi\":true}",
+        "method": "POST",
+        "url": "https://mavisudoku.com/api/admin/eposta/kampanya",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI('govde', 'Kampanya (JSON)', 'json') }}"
+      },
+      "id": "fb58b36f-4996-4081-8fd6-3b8ebd2cb6cb",
+      "name": "eposta_kampanyasi",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Site üstünde duyuru bandı açar. Gövde: {\"baslik\":\"...\",\"metin\":\"...\",\"baglanti\":\"/turnuvalar/\",\"bitis\":\"2026-11-29T22:00:00+03:00\",\"denetci_onayi\":true}",
+        "method": "POST",
+        "url": "https://mavisudoku.com/api/admin/duyuru",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI('govde', 'Duyuru (JSON)', 'json') }}"
+      },
+      "id": "552e7db0-f936-4d58-81cd-e6dd909888d3",
+      "name": "site_duyurusu",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "MaviSudoku gerçek verilerini getirir. 'kaynak' şunlardan biri olmalı: gunun-bulmacasi, haftanin-sampiyonu, turnuva/aktif, turnuva/son-sonuc, lig/son-sonuc, istatistik?donem=gun, istatistik?donem=hafta",
+        "method": "GET",
+        "url": "=https://mavisudoku.com/api/admin/{{ $fromAI('kaynak', 'Veri kaynağı yolu, örn. gunun-bulmacasi', 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "1c07e549-25e2-4245-a58f-bca9e71ddbc7",
+      "name": "site_verisi",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        820,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "denetci_kontrol",
+        "description": "Yayından veya kalıcı bandan önce bağımsız kontrol. İçeriğin TAMAMINI, türünü ve hedef kitlesini tek metin olarak gönder. JSON döner: karar ONAY/RED, gerekce, duzeltme.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_08_DENETCI"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "c2624df6-c7d1-480b-98fe-af0d529d6c8d",
+      "name": "denetci_kontrol",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        980,
+        540
+      ]
+    }
+  ],
+  "connections": {
+    "Başlangıç": {
+      "main": [
+        [
+          {
+            "node": "Ajan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajan": {
+      "main": [
+        [
+          {
+            "node": "İşlem Kaydı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "İşlem Kaydı": {
+      "main": [
+        [
+          {
+            "node": "Sonuç",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "oyuncu_segmenti": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "eposta_kampanyasi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site_duyurusu": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site_verisi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "denetci_kontrol": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

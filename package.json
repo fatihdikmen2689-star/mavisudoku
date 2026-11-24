@@ -1,0 +1,12 @@
+{
+  "name": "mavisudoku",
+  "private": true,
+  "type": "module",
+  "workspaces": ["paketler/*"],
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "test": "node --test paketler/motor/test/*.test.ts",
+    "havuz": "node araclar/havuz-uret.ts 60 veri/havuz.json",
+    "prototip": "node araclar/prototip-derle.ts"
+  }
+}

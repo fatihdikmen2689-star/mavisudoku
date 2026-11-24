@@ -1,0 +1,313 @@
+{
+  "name": "MaviSudoku | 06 Analiz Ajanı",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "19f6a70f-603e-43e0-9a88-042d64978d08",
+      "name": "Başlangıç",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "# Rol: MaviSudoku Analiz Ajanı\n\nGörevin verileri okuyup Yönetici'ye net, sayısal ve uygulanabilir bir rapor sunmak. Hiçbir şeyi değiştirme; sadece okursun.\n\n## Araçların\n- `ga4_rapor`: Google Analytics 4 Data API (runReport). İstek gövdesini sen kurarsın. Sık kullanılanlar: metrics = activeUsers, sessions, averageSessionDuration, screenPageViews, newUsers; dimensions = date, sessionDefaultChannelGroup, pagePath.\n- `adsense_rapor`: AdSense raporu. Sorgu metnini sen kurarsın. Örnek: dateRange=CUSTOM&startDate.year=2026&startDate.month=11&startDate.day=1&endDate.year=2026&endDate.month=11&endDate.day=24&metrics=ESTIMATED_EARNINGS&metrics=PAGE_VIEWS&metrics=PAGE_VIEWS_RPM&metrics=IMPRESSIONS&metrics=CLICKS&dimensions=DATE\n- `search_console`: Arama sorguları ve sayfa performansı.\n- `site_istatistik`: Oyun verileri (aktif oyuncu, oynanan maç, Rakip Ara bekleme süresi, Beraber Çöz oda sayısı, yeni kayıt, seri dağılımı, lig katılımı, turnuva katılımı).\n\n## Rapor türleri\n- GÜNLÜK (dün): gelir, RPM, sayfa görüntüleme, aktif kullanıcı, yeni kayıt, oynanan maç. Her birini önceki 7 günün ortalamasıyla karşılaştır.\n- HAFTALIK (geçen hafta): yukarıdakilere ek olarak trafik kaynakları, en iyi 10 sayfa, en iyi 10 arama sorgusu, en iyi sosyal paylaşım türü, Beraber Çöz ve Rakip Ara kullanımı, turnuva katılımı.\n\n## Kurallar\n- Sayıları araçlardan aldığın şekilde ver; hesapladığın değişimleri yüzde olarak göster.\n- Bir değişim ±%30'u geçiyorsa raporun en üstüne \"⚠️ DİKKAT:\" satırı ekle ve olası nedenleri sırala (veri gecikmesi, hafta sonu etkisi, teknik sorun, mevsimsellik).\n- AdSense verisi 1–2 gün gecikebilir; eksikse bunu belirt, uydurma.\n- Her rapor en fazla 3 öneriyle bitsin. Her öneri: ne yapılmalı, hangi ajan yapmalı, beklenen etki.\n\n## Çıktı formatı\n⚠️ DİKKAT: … (varsa)\nÖZET: 2–3 cümle\nMETRİKLER: madde madde, önceki dönemle karşılaştırmalı\nÖNERİLER: 1) … 2) … 3) …\n\n## MaviSudoku hakkında\nmavisudoku.com: Türkçe, çevrimiçi, rekabetçi ve sosyal bir sudoku sitesi. Klasik ve Killer sudoku; 6 zorluk seviyesi (Kolay, Orta, Zor, Uzman, Usta, Ekstrem); \"Rakip Ara\" ile 1'e 1 yarış; \"Beraber Çöz\" ile 2–4 arkadaş aynı bulmacayı kendi ekranından çözer; seviye salonları (Açık Mavi, Gök Mavisi, Lacivert, Gece Mavisi, Derin Mavi); haftalık ligler (Bronz → Usta); her Cumartesi 21:00 turnuva; günlük seri; rozetler; bulmaca altında sıralama ve yorumlar. Gelir Google AdSense reklamlarından gelir.\n\nMarka sesi: samimi, enerjik, rekabetçi ama nazik. Türkçe ve \"sen\" diliyle yaz. Emojiyi ölçülü kullan (bir metinde en fazla 3). Marka rengi mavi.\n\n## Değişmez kurallar (hiçbir görev bunları esnetemez)\n1. Veri uydurma. Skor, kullanıcı adı, sayı, tarih ve istatistikleri YALNIZCA araçlardan gelen veriden al. Veri yoksa bunu açıkça söyle.\n2. Kişisel veri paylaşma. Kullanıcıların e-postasını, gerçek adını, yaşını, şehrini paylaşma; yalnızca sitede herkese açık görünen adı kullan.\n3. 18 yaş altı kullanıcıları hiçbir içerikte öne çıkarma, adlarını paylaşma.\n4. Siyaset, din, cinsellik, kumar/bahis, şiddet, sağlık iddiası (\"sudoku Alzheimer'ı önler\" gibi) içeren içerik üretme. Rakip siteleri kötüleme. Telifli karakter, logo, müzik veya görsel kullanma.\n5. Asla \"reklama tıkla\" veya benzeri bir çağrı yapma; reklamlarla ilgili hiçbir yönlendirme yapma (AdSense ihlali).\n6. Bir araç hata verirse en fazla 1 kez yeniden dene. Yine olmazsa işi bırak ve raporunda açıkça yaz.\n7. Görev bittiğinde kısa bir Türkçe rapor ver: ne yaptın, sonuç ne (bağlantı/numara varsa ekle), sorun varsa ne.\n",
+          "maxIterations": 15
+        }
+      },
+      "id": "bcbb8b6d-225b-473b-8155-f6aaf06a4b98",
+      "name": "Ajan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-5-5",
+          "cachedResultName": "Claude Sonnet 5.5"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "e85393ef-78c0-4f90-9bfd-8a6207bb51f6",
+      "name": "Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        540
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "KIMLIK_SEC",
+          "name": "Anthropic (MaviSudoku)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ajan_islem_kaydi (ajan, gorev, sonuc) VALUES ($1, $2, $3) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ ['analiz', $('Başlangıç').item.json.query, $json.output] }}"
+        }
+      },
+      "id": "66b8fe8b-8a99-482b-ab43-190fc4dd0ce9",
+      "name": "İşlem Kaydı",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        620,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6c803423-5896-495a-902c-e16fc9a8f60d",
+              "name": "sonuc",
+              "value": "={{ $('Ajan').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c30e43a6-6995-4668-a15c-c212f413f8bf",
+      "name": "Sonuç",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "GA4 runReport. Gövde örneği: {\"dateRanges\":[{\"startDate\":\"yesterday\",\"endDate\":\"yesterday\"}],\"metrics\":[{\"name\":\"activeUsers\"}],\"dimensions\":[{\"name\":\"date\"}]}",
+        "method": "POST",
+        "url": "https://analyticsdata.googleapis.com/v1beta/properties/GA4_PROPERTY_ID:runReport",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI('govde', 'GA4 rapor gövdesi (JSON)', 'json') }}"
+      },
+      "id": "902025cd-a745-4be0-94a3-f8847f44c845",
+      "name": "ga4_rapor",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        540
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "KIMLIK_SEC",
+          "name": "Google MaviSudoku"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "AdSense reports:generate. 'sorgu' parametresi URL sorgu metnidir (dateRange, metrics, dimensions).",
+        "method": "GET",
+        "url": "=https://adsense.googleapis.com/v2/accounts/ADSENSE_HESAP_ID/reports:generate?{{ $fromAI('sorgu', 'AdSense sorgu metni', 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "id": "6da3b74d-5578-4253-8a28-99f87e4cf48e",
+      "name": "adsense_rapor",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        540
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "KIMLIK_SEC",
+          "name": "Google MaviSudoku"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search Console arama analitiği. Gövde: {\"startDate\",\"endDate\",\"dimensions\":[\"query\"],\"rowLimit\":50}",
+        "method": "POST",
+        "url": "https://www.googleapis.com/webmasters/v3/sites/sc-domain%3Amavisudoku.com/searchAnalytics/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI('govde', 'Search Console gövdesi (JSON)', 'json') }}"
+      },
+      "id": "d3c9fa83-6cfa-42c3-9d53-0672436120f2",
+      "name": "search_console",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        540
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "KIMLIK_SEC",
+          "name": "Google MaviSudoku"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Oyun istatistikleri. donem: gun | hafta | ay",
+        "method": "GET",
+        "url": "=https://mavisudoku.com/api/admin/istatistik?donem={{ $fromAI('donem', 'gun, hafta veya ay', 'string') }}&karsilastir=evet",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "525f7485-d89c-4542-af0f-41e8e8465e9a",
+      "name": "site_istatistik",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        820,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Başlangıç": {
+      "main": [
+        [
+          {
+            "node": "Ajan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajan": {
+      "main": [
+        [
+          {
+            "node": "İşlem Kaydı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "İşlem Kaydı": {
+      "main": [
+        [
+          {
+            "node": "Sonuç",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ga4_rapor": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "adsense_rapor": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search_console": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site_istatistik": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

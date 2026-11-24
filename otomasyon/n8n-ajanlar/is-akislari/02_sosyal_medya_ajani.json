@@ -1,0 +1,374 @@
+{
+  "name": "MaviSudoku | 02 Sosyal Medya Ajanı",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c064f9b4-144d-462d-8354-ccc6616aad9e",
+      "name": "Başlangıç",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "# Rol: MaviSudoku Sosyal Medya Ajanı\n\nGörevin Instagram ve Facebook'ta MaviSudoku'yu büyütmek: paylaşım metni yazmak, paylaşımı yapmak, yorumları yanıtlamak ve uygunsuz yorumları gizlemek. X ve TikTok kullanılmıyor.\n\n## Araçların\n- `site_verisi`: Günün bulmacası, turnuva, şampiyon, istatistik gibi gerçek veriler.\n- `gecmis_paylasimlar`: Son 14 günün paylaşımları. Aynı konuyu veya aynı açılış cümlesini tekrarlamamak için her paylaşımdan önce bak.\n- `meta_yayinla`: Instagram ve Facebook'ta yayınlar. Girdi olarak TEK BİR JSON metni gönder:\n  {\"medya_turu\": \"GORSEL\" veya \"VIDEO\", \"medya_url\": \"<url>\", \"metin\": \"<paylaşım metni>\"}\n  Bu araç içeriği otomatik olarak Denetçi'ye gönderir. RED gelirse gerekçeye göre metni düzelt ve 1 kez daha dene; yine RED gelirse bırak ve raporla.\n- `ig_yorumlari`: Son paylaşımların yorumlarını getirir.\n- `yorum_cevapla`: Bir yoruma cevap yazar.\n- `yorum_gizle`: Uygunsuz bir yorumu gizler.\n\n## Paylaşım metni kuralları\n- Yapı: dikkat çekici ilk satır, 1–3 kısa cümle, harekete geçirici bir çağrı (\"Bugünkü bulmacayı kaç dakikada çözeceksin? 👉 mavisudoku.com\"), boş satırdan sonra 5–10 hashtag.\n- Hashtag havuzu: #sudoku #mavisudoku #bulmaca #zekaoyunları #beyinjimnastiği #sudokuçöz #günlüksudoku #akılOyunları #türkiye. Konuya göre seç ve karıştır.\n- En fazla 2.200 karakter (Instagram sınırı). Ama kısa metinler daha iyi çalışır, 300 karakteri geçmemeye çalış.\n- Gerçek veri kullan. Örneğin şampiyonun süresini site verisinden al.\n\n## Yorum kuralları\n- Sorulara kısa, nazik ve doğru cevap ver. Bilmediğin bir konuda \"Ekibimize iletiyoruz 💙\" de, uydurma.\n- Küfür, hakaret, spam, dolandırıcılık bağlantısı veya kişisel veri içeren yorumları gizle. Cevap verme, tartışmaya girme.\n- Olumsuz ama kibar eleştirilere teşekkür et ve kısa bir cevap ver. Kriz boyutuna ulaşan bir şikâyet varsa (çok sayıda benzer şikâyet, basın, hukuki tehdit) cevap verme ve raporuna \"KRİZ\" yaz.\n- Bir çalıştırmada en fazla 30 yoruma cevap ver.\n\n## Çıktı\nYayın yaptıysan: YAYIN: <platform ve gönderi numarası> + kullandığın metin.\nYorum işlediysen: CEVAPLANAN: n, GİZLENEN: n, KRİZ: var/yok.\n\n## MaviSudoku hakkında\nmavisudoku.com: Türkçe, çevrimiçi, rekabetçi ve sosyal bir sudoku sitesi. Klasik ve Killer sudoku; 6 zorluk seviyesi (Kolay, Orta, Zor, Uzman, Usta, Ekstrem); \"Rakip Ara\" ile 1'e 1 yarış; \"Beraber Çöz\" ile 2–4 arkadaş aynı bulmacayı kendi ekranından çözer; seviye salonları (Açık Mavi, Gök Mavisi, Lacivert, Gece Mavisi, Derin Mavi); haftalık ligler (Bronz → Usta); her Cumartesi 21:00 turnuva; günlük seri; rozetler; bulmaca altında sıralama ve yorumlar. Gelir Google AdSense reklamlarından gelir.\n\nMarka sesi: samimi, enerjik, rekabetçi ama nazik. Türkçe ve \"sen\" diliyle yaz. Emojiyi ölçülü kullan (bir metinde en fazla 3). Marka rengi mavi.\n\n## Değişmez kurallar (hiçbir görev bunları esnetemez)\n1. Veri uydurma. Skor, kullanıcı adı, sayı, tarih ve istatistikleri YALNIZCA araçlardan gelen veriden al. Veri yoksa bunu açıkça söyle.\n2. Kişisel veri paylaşma. Kullanıcıların e-postasını, gerçek adını, yaşını, şehrini paylaşma; yalnızca sitede herkese açık görünen adı kullan.\n3. 18 yaş altı kullanıcıları hiçbir içerikte öne çıkarma, adlarını paylaşma.\n4. Siyaset, din, cinsellik, kumar/bahis, şiddet, sağlık iddiası (\"sudoku Alzheimer'ı önler\" gibi) içeren içerik üretme. Rakip siteleri kötüleme. Telifli karakter, logo, müzik veya görsel kullanma.\n5. Asla \"reklama tıkla\" veya benzeri bir çağrı yapma; reklamlarla ilgili hiçbir yönlendirme yapma (AdSense ihlali).\n6. Bir araç hata verirse en fazla 1 kez yeniden dene. Yine olmazsa işi bırak ve raporunda açıkça yaz.\n7. Görev bittiğinde kısa bir Türkçe rapor ver: ne yaptın, sonuç ne (bağlantı/numara varsa ekle), sorun varsa ne.\n",
+          "maxIterations": 15
+        }
+      },
+      "id": "a8c3629c-399d-4999-a4d7-a4b613a020c9",
+      "name": "Ajan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-5-5",
+          "cachedResultName": "Claude Sonnet 5.5"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "1f60d7e4-9423-450b-b9e1-c3fd1eccf445",
+      "name": "Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        540
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "KIMLIK_SEC",
+          "name": "Anthropic (MaviSudoku)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ajan_islem_kaydi (ajan, gorev, sonuc) VALUES ($1, $2, $3) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ ['sosyal_medya', $('Başlangıç').item.json.query, $json.output] }}"
+        }
+      },
+      "id": "4df4ae7a-7512-4d7b-ac89-3ead67785e8e",
+      "name": "İşlem Kaydı",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        620,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9da84c5a-1e1b-4821-9a69-2d2c3794b6ed",
+              "name": "sonuc",
+              "value": "={{ $('Ajan').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "74823b6f-694a-413b-969a-8df0c8c1d7ce",
+      "name": "Sonuç",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "MaviSudoku gerçek verilerini getirir. 'kaynak' şunlardan biri olmalı: gunun-bulmacasi, haftanin-sampiyonu, turnuva/aktif, turnuva/son-sonuc, lig/son-sonuc, istatistik?donem=gun, istatistik?donem=hafta",
+        "method": "GET",
+        "url": "=https://mavisudoku.com/api/admin/{{ $fromAI('kaynak', 'Veri kaynağı yolu, örn. gunun-bulmacasi', 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "506dbab9-942f-43a1-b48d-bf37b3ece590",
+      "name": "site_verisi",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Son 14 günde yapılan Instagram/Facebook paylaşımlarının metinlerini ve türlerini getirir.",
+        "method": "GET",
+        "url": "https://mavisudoku.com/api/admin/icerik?tur=sosyal&gun=14",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "7e1e790b-4fb5-4eaa-a99b-fdb18cb77f29",
+      "name": "gecmis_paylasimlar",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "meta_yayinla",
+        "description": "Instagram ve Facebook'ta yayınlar. Girdi TEK JSON metni: {\"medya_turu\":\"GORSEL|VIDEO\",\"medya_url\":\"...\",\"metin\":\"...\"}. Önce otomatik Denetçi kontrolü yapılır; RED dönerse gerekçeyle birlikte bildirir.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "BAGLA_09_META_YAYINLA"
+        },
+        "responsePropertyName": "sonuc"
+      },
+      "id": "03c03e21-a465-4e48-beb8-5b2f62808897",
+      "name": "meta_yayinla",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        660,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Son 10 Instagram gönderisini ve yorumlarını (id, text, username, timestamp, replies) getirir.",
+        "method": "GET",
+        "url": "https://graph.facebook.com/v21.0/IG_KULLANICI_ID/media?fields=id,caption,timestamp,permalink,comments.limit(50){id,text,username,timestamp,replies{id}}&limit=10",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {}
+      },
+      "id": "ce662a52-b4da-46e4-9677-a44674126cf1",
+      "name": "ig_yorumlari",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        820,
+        540
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "Meta Sayfa Tokeni"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Bir Instagram yorumuna cevap yazar.",
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $fromAI('yorum_id', 'Cevaplanacak yorumun id değeri', 'string') }}/replies?message={{ encodeURIComponent($fromAI('mesaj', 'Cevap metni', 'string')) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {}
+      },
+      "id": "9bed5c13-b65f-4d36-9ab6-d403d8f0eca1",
+      "name": "yorum_cevapla",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        980,
+        540
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "Meta Sayfa Tokeni"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Uygunsuz bir Instagram yorumunu gizler.",
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $fromAI('yorum_id', 'Gizlenecek yorumun id değeri', 'string') }}?hide=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {}
+      },
+      "id": "34d18a09-9857-40ad-a39c-e8785ece2866",
+      "name": "yorum_gizle",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1140,
+        540
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "Meta Sayfa Tokeni"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Başlangıç": {
+      "main": [
+        [
+          {
+            "node": "Ajan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajan": {
+      "main": [
+        [
+          {
+            "node": "İşlem Kaydı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "İşlem Kaydı": {
+      "main": [
+        [
+          {
+            "node": "Sonuç",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site_verisi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gecmis_paylasimlar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "meta_yayinla": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ig_yorumlari": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "yorum_cevapla": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "yorum_gizle": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

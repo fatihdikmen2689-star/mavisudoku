@@ -1,0 +1,156 @@
+{
+  "name": "MaviSudoku | 10 Telegram Komutları (isteğe bağlı)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "6b3d78c8-198d-4ddf-803a-e05ef4e496f2",
+      "name": "Telegram Mesajı",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Telegram Bot"
+        }
+      },
+      "webhookId": "73643121-88e9-426c-b0ff-9273c34a0f38"
+    },
+    {
+      "parameters": {
+        "jsCode": "const m = $input.first().json.message || {};\nif (String(m.chat && m.chat.id) !== 'TELEGRAM_CHAT_ID') return [];\nconst t = (m.text || '').trim().toLowerCase();\nif (t.startsWith('/durdur')) return [{ json: { sql: \"UPDATE ayarlar SET deger = 'hayir' WHERE anahtar = 'sistem_aktif' RETURNING deger;\", komut: 'durdur' } }];\nif (t.startsWith('/baslat')) return [{ json: { sql: \"UPDATE ayarlar SET deger = 'evet' WHERE anahtar = 'sistem_aktif' RETURNING deger;\", komut: 'baslat' } }];\nif (t.startsWith('/durum')) return [{ json: { sql: \"SELECT to_char(zaman AT TIME ZONE 'Europe/Istanbul', 'DD.MM HH24:MI') AS saat, ajan, left(coalesce(sonuc, ''), 120) AS ozet FROM ajan_islem_kaydi ORDER BY id DESC LIMIT 10;\", komut: 'durum' } }];\nreturn [{ json: { sql: 'SELECT 1 AS bos;', komut: 'yardim' } }];"
+      },
+      "id": "b403d677-868c-4390-bbc1-fd86c215f42e",
+      "name": "Komut Çöz",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.sql }}",
+        "options": {}
+      },
+      "id": "7d0efa98-d793-45cb-b389-6bd0bfbee3bd",
+      "name": "Komutu Uygula",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const komut = $('Komut Çöz').first().json.komut;\nconst satirlar = $input.all().map(i => i.json);\nlet metin;\nif (komut === 'durdur') metin = '⏸️ Tüm otomasyon durduruldu. Yeniden başlatmak için /baslat yaz.';\nelse if (komut === 'baslat') metin = '▶️ Otomasyon yeniden çalışıyor.';\nelse if (komut === 'durum') metin = '📋 Son 10 işlem:\\n' + satirlar.filter(s => s.ajan).map(s => `${s.saat} · ${s.ajan}: ${s.ozet}`).join('\\n');\nelse metin = 'Komutlar: /durum (son işlemler), /durdur (acil durdur), /baslat (yeniden başlat). Bunları kullanmak zorunda değilsin; sistem kendi kendine çalışır.';\nreturn [{ json: { metin } }];"
+      },
+      "id": "754bf075-9cab-4bb6-98e6-7a3959667d26",
+      "name": "Cevap Hazırla",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "TELEGRAM_CHAT_ID",
+        "text": "={{ $json.metin }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "4b5a9e15-f6e2-4b7b-b482-5f5240b228c6",
+      "name": "Cevap Gönder",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Mesajı": {
+      "main": [
+        [
+          {
+            "node": "Komut Çöz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Komut Çöz": {
+      "main": [
+        [
+          {
+            "node": "Komutu Uygula",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Komutu Uygula": {
+      "main": [
+        [
+          {
+            "node": "Cevap Hazırla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cevap Hazırla": {
+      "main": [
+        [
+          {
+            "node": "Cevap Gönder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

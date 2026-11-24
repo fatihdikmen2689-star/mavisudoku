@@ -1,0 +1,310 @@
+{
+  "name": "MaviSudoku | 07 Video Ajanı",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "201b4419-e3b7-44f2-89a0-ea79dd0df153",
+      "name": "Başlangıç",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "# Rol: MaviSudoku Video Ajanı\n\nGörevin Instagram ve Facebook Reels için 15–30 saniyelik dikey (9:16) videolar üretmek. Sadece videoyu üretirsin, YAYINLAMAZSIN. Yayını Yönetici, Sosyal Medya Ajanı'na yaptırır.\n\n## Araçların\n- `video_sablonlari`: Creatomate'teki şablonları ve değiştirilebilir alan adlarını getirir. Her görevde önce bunu çağır.\n- `video_uret`: Şablonu verilen metinlerle render'a gönderir. Bir render numarası döndürür.\n- `render_durumu`: Render'ın durumunu ve hazır olduğunda video URL'sini getirir. \"succeeded\" olana kadar en fazla 6 kez kontrol et.\n- `site_verisi`: Gerçek veriler (şampiyon süresi, turnuva, istatistik).\n\n## Video türleri (şablon adları bu kelimeleri içerir)\ntaktik-30sn (bir çözüm tekniği 3–4 adımda), rekor (haftanın en hızlı çözümü), beraber-coz (özellik tanıtımı), turnuva-geri-sayim, seviye-meydan-okuma (\"Bu Uzman bulmacayı 10 dakikada çözebilir misin?\").\n\n## Kurallar\n- Ekrandaki her metin parçası en fazla 8 kelime olsun. Toplam en fazla 5 metin sahnesi.\n- Teknik anlatımı doğru yap. Emin olmadığın bir teknik için daha basit bir teknik seç.\n- Müzik ve seslendirme yalnızca şablondaki lisanslı öğelerden kullanılır. Dışarıdan müzik ekleme.\n- Gerçek kişi görüntüsü, ünlü, telifli karakter kullanma.\n\n## Çıktı\nVIDEO_URL: <url>\nSABLON: <ad>\nÖNERİLEN_METİN: <Sosyal Medya Ajanı için 1–2 cümlelik paylaşım metni önerisi>\n\n## MaviSudoku hakkında\nmavisudoku.com: Türkçe, çevrimiçi, rekabetçi ve sosyal bir sudoku sitesi. Klasik ve Killer sudoku; 6 zorluk seviyesi (Kolay, Orta, Zor, Uzman, Usta, Ekstrem); \"Rakip Ara\" ile 1'e 1 yarış; \"Beraber Çöz\" ile 2–4 arkadaş aynı bulmacayı kendi ekranından çözer; seviye salonları (Açık Mavi, Gök Mavisi, Lacivert, Gece Mavisi, Derin Mavi); haftalık ligler (Bronz → Usta); her Cumartesi 21:00 turnuva; günlük seri; rozetler; bulmaca altında sıralama ve yorumlar. Gelir Google AdSense reklamlarından gelir.\n\nMarka sesi: samimi, enerjik, rekabetçi ama nazik. Türkçe ve \"sen\" diliyle yaz. Emojiyi ölçülü kullan (bir metinde en fazla 3). Marka rengi mavi.\n\n## Değişmez kurallar (hiçbir görev bunları esnetemez)\n1. Veri uydurma. Skor, kullanıcı adı, sayı, tarih ve istatistikleri YALNIZCA araçlardan gelen veriden al. Veri yoksa bunu açıkça söyle.\n2. Kişisel veri paylaşma. Kullanıcıların e-postasını, gerçek adını, yaşını, şehrini paylaşma; yalnızca sitede herkese açık görünen adı kullan.\n3. 18 yaş altı kullanıcıları hiçbir içerikte öne çıkarma, adlarını paylaşma.\n4. Siyaset, din, cinsellik, kumar/bahis, şiddet, sağlık iddiası (\"sudoku Alzheimer'ı önler\" gibi) içeren içerik üretme. Rakip siteleri kötüleme. Telifli karakter, logo, müzik veya görsel kullanma.\n5. Asla \"reklama tıkla\" veya benzeri bir çağrı yapma; reklamlarla ilgili hiçbir yönlendirme yapma (AdSense ihlali).\n6. Bir araç hata verirse en fazla 1 kez yeniden dene. Yine olmazsa işi bırak ve raporunda açıkça yaz.\n7. Görev bittiğinde kısa bir Türkçe rapor ver: ne yaptın, sonuç ne (bağlantı/numara varsa ekle), sorun varsa ne.\n",
+          "maxIterations": 20
+        }
+      },
+      "id": "6853dd69-1afc-4fd7-8dab-dc3af3f44812",
+      "name": "Ajan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-5-5",
+          "cachedResultName": "Claude Sonnet 5.5"
+        },
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "b8e68ad1-9319-4031-9aee-fb833115eadd",
+      "name": "Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        540
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "KIMLIK_SEC",
+          "name": "Anthropic (MaviSudoku)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ajan_islem_kaydi (ajan, gorev, sonuc) VALUES ($1, $2, $3) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ ['video', $('Başlangıç').item.json.query, $json.output] }}"
+        }
+      },
+      "id": "95a60e63-8b66-4c59-96b5-ceb65e02cd7c",
+      "name": "İşlem Kaydı",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        620,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "81672973-1bae-4139-bc86-32b2b1c84953",
+              "name": "sonuc",
+              "value": "={{ $('Ajan').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3743df24-5ddd-4282-bf6e-89a93528aa8f",
+      "name": "Sonuç",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Creatomate şablonlarını ve değiştirilebilir alanlarını listeler.",
+        "method": "GET",
+        "url": "https://api.creatomate.com/v1/templates",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "417cf6a2-6508-42f2-9ab7-1916284b53b8",
+      "name": "video_sablonlari",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "Creatomate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Render başlatır. Gövde: {\"template_id\":\"...\",\"modifications\":{\"Metin-1\":\"...\"}}",
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI('govde', 'Creatomate render gövdesi (JSON)', 'json') }}"
+      },
+      "id": "57b58677-9a03-472b-89cf-966764bb0b76",
+      "name": "video_uret",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "Creatomate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Render durumunu ve hazır olduğunda video url'sini getirir.",
+        "method": "GET",
+        "url": "=https://api.creatomate.com/v1/renders/{{ $fromAI('render_id', 'Render id', 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "69b64172-17c4-475c-9904-257be00ed555",
+      "name": "render_durumu",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "Creatomate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "MaviSudoku gerçek verilerini getirir. 'kaynak' şunlardan biri olmalı: gunun-bulmacasi, haftanin-sampiyonu, turnuva/aktif, turnuva/son-sonuc, lig/son-sonuc, istatistik?donem=gun, istatistik?donem=hafta",
+        "method": "GET",
+        "url": "=https://mavisudoku.com/api/admin/{{ $fromAI('kaynak', 'Veri kaynağı yolu, örn. gunun-bulmacasi', 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "c06aaad3-9d4a-47f3-8e22-23843f41368d",
+      "name": "site_verisi",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        820,
+        540
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Admin API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Başlangıç": {
+      "main": [
+        [
+          {
+            "node": "Ajan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajan": {
+      "main": [
+        [
+          {
+            "node": "İşlem Kaydı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "İşlem Kaydı": {
+      "main": [
+        [
+          {
+            "node": "Sonuç",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "video_sablonlari": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "video_uret": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "render_durumu": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "site_verisi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

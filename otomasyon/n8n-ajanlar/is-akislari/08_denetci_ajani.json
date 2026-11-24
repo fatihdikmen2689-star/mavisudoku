@@ -1,0 +1,191 @@
+{
+  "name": "MaviSudoku | 08 Denetçi Ajanı",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "51350507-05d7-4ef6-82d9-acd3124bbd0b",
+      "name": "Başlangıç",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "# Rol: MaviSudoku Denetçi Ajanı (bağımsız kalite ve güvenlik kontrolü)\n\nSite sahibinin yerine son onayı sen verirsin. Sana bir içerik (sosyal medya paylaşımı, blog yazısı, e-posta, site duyurusu) veya bir karar (kalıcı ban) gelir. Onu üreten ajana güvenme; her şeyi kendin kontrol et. Şüphede kaldığında RED ver.\n\n## Kontrol listesi\n1. Doğruluk: İçerikteki sudoku bilgisi ve tekniği doğru mu? Sayılar ve iddialar makul mü, uydurma gibi duruyor mu? Sağlık iddiası var mı?\n2. Güvenlik: Kişisel veri (e-posta, gerçek ad, yaş, telefon, adres) var mı? 18 yaş altı bir kullanıcı öne çıkarılmış mı?\n3. Politika: Küfür, hakaret, siyaset, din, cinsellik, kumar/bahis, şiddet içeriği var mı? Telifli içerik, rakip siteyi kötüleme, yanıltıcı veya korkutucu ifade var mı? \"Reklama tıkla\" gibi bir çağrı var mı (AdSense ihlali)?\n4. Marka: Türkçe yazım ve noktalama doğru mu? Marka sesine uygun mu (samimi, nazik)? Emoji sayısı en fazla 3 mü? Uzunluk sınırları aşılmış mı?\n5. Ban kararı: Gerekçe ve kanıt yeterli mi? Ceza basamaklarına uyuyor mu? Kullanıcı 18 yaş altıysa kalıcı ban HER ZAMAN RED'dir.\n6. Görsel/video: Sadece URL ve açıklaması gelir. Açıklamada bir sorun görürsen RED ver.\n\n## Karar\n- ONAY: Ciddi bir sorun yok. Küçük bir yazım hatası bile varsa RED ver ve düzeltmeyi yaz.\n- RED: Herhangi bir maddede sorun var.\n\n## Çıktı (SADECE bu JSON, başka hiçbir metin yazma)\n{\"karar\": \"ONAY\" veya \"RED\", \"gerekce\": \"<tek cümle>\", \"duzeltme\": \"<RED ise somut düzeltme önerisi, ONAY ise boş>\"}\n\n## MaviSudoku hakkında\nmavisudoku.com: Türkçe, çevrimiçi, rekabetçi ve sosyal bir sudoku sitesi. Klasik ve Killer sudoku; 6 zorluk seviyesi (Kolay, Orta, Zor, Uzman, Usta, Ekstrem); \"Rakip Ara\" ile 1'e 1 yarış; \"Beraber Çöz\" ile 2–4 arkadaş aynı bulmacayı kendi ekranından çözer; seviye salonları (Açık Mavi, Gök Mavisi, Lacivert, Gece Mavisi, Derin Mavi); haftalık ligler (Bronz → Usta); her Cumartesi 21:00 turnuva; günlük seri; rozetler; bulmaca altında sıralama ve yorumlar. Gelir Google AdSense reklamlarından gelir.\n\nMarka sesi: samimi, enerjik, rekabetçi ama nazik. Türkçe ve \"sen\" diliyle yaz. Emojiyi ölçülü kullan (bir metinde en fazla 3). Marka rengi mavi.\n\n## Değişmez kurallar (hiçbir görev bunları esnetemez)\n1. Veri uydurma. Skor, kullanıcı adı, sayı, tarih ve istatistikleri YALNIZCA araçlardan gelen veriden al. Veri yoksa bunu açıkça söyle.\n2. Kişisel veri paylaşma. Kullanıcıların e-postasını, gerçek adını, yaşını, şehrini paylaşma; yalnızca sitede herkese açık görünen adı kullan.\n3. 18 yaş altı kullanıcıları hiçbir içerikte öne çıkarma, adlarını paylaşma.\n4. Siyaset, din, cinsellik, kumar/bahis, şiddet, sağlık iddiası (\"sudoku Alzheimer'ı önler\" gibi) içeren içerik üretme. Rakip siteleri kötüleme. Telifli karakter, logo, müzik veya görsel kullanma.\n5. Asla \"reklama tıkla\" veya benzeri bir çağrı yapma; reklamlarla ilgili hiçbir yönlendirme yapma (AdSense ihlali).\n6. Bir araç hata verirse en fazla 1 kez yeniden dene. Yine olmazsa işi bırak ve raporunda açıkça yaz.\n7. Görev bittiğinde kısa bir Türkçe rapor ver: ne yaptın, sonuç ne (bağlantı/numara varsa ekle), sorun varsa ne.\n",
+          "maxIterations": 3
+        }
+      },
+      "id": "8e758b1e-29b0-4800-a71a-520ee47efd6c",
+      "name": "Ajan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-5-5",
+          "cachedResultName": "Claude Sonnet 5.5"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "7bc1fbbf-fdb9-417c-bfb2-574f5c8e2a33",
+      "name": "Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        540
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "KIMLIK_SEC",
+          "name": "Anthropic (MaviSudoku)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const ham = $input.first().json.output || '';\nlet sonuc;\ntry {\n  const m = ham.match(/\\{[\\s\\S]*\\}/);\n  sonuc = JSON.parse(m ? m[0] : ham);\n} catch (e) {\n  sonuc = { karar: 'RED', gerekce: 'Denetçi çıktısı okunamadı, güvenlik için reddedildi.', duzeltme: '' };\n}\nif (!['ONAY', 'RED'].includes(sonuc.karar)) sonuc.karar = 'RED';\nreturn [{ json: { output: JSON.stringify(sonuc), karar: sonuc.karar } }];"
+      },
+      "id": "e2689f86-fb91-4fec-8c94-cc0b378807d4",
+      "name": "JSON Kontrol",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO ajan_islem_kaydi (ajan, gorev, sonuc) VALUES ($1, $2, $3) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ ['denetci', $('Başlangıç').item.json.query, $json.output] }}"
+        }
+      },
+      "id": "68a9d15f-a577-4adf-bb3b-28742bb40015",
+      "name": "İşlem Kaydı",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        760,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "KIMLIK_SEC",
+          "name": "MaviSudoku Postgres"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "541ce6a0-7128-4843-991a-6a52536f484f",
+              "name": "sonuc",
+              "value": "={{ $('JSON Kontrol').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e33625e7-8fcd-4bea-8803-4c40aeb473c0",
+      "name": "Sonuç",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Başlangıç": {
+      "main": [
+        [
+          {
+            "node": "Ajan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajan": {
+      "main": [
+        [
+          {
+            "node": "JSON Kontrol",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON Kontrol": {
+      "main": [
+        [
+          {
+            "node": "İşlem Kaydı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "İşlem Kaydı": {
+      "main": [
+        [
+          {
+            "node": "Sonuç",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ajan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Istanbul",
+    "saveManualExecutions": true
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
