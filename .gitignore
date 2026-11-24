@@ -4,3 +4,7 @@ node_modules/
 dagitim/
 .env
 .env.*
+.next/
+veri/pglite/
+*.tsbuildinfo
+next-env.d.ts

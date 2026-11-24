@@ -2,11 +2,14 @@
   "name": "mavisudoku",
   "private": true,
   "type": "module",
-  "workspaces": ["paketler/*"],
+  "workspaces": ["paketler/*", "uygulamalar/web"],
   "engines": { "node": ">=22.18" },
   "scripts": {
-    "test": "node --test paketler/motor/test/*.test.ts",
+    "test": "node --test paketler/motor/test/*.test.ts && npm run test -w @mavisudoku/web",
     "havuz": "node araclar/havuz-uret.ts 60 veri/havuz.json",
-    "prototip": "node araclar/prototip-derle.ts"
+    "prototip": "node araclar/prototip-derle.ts",
+    "dev": "npm run dev -w @mavisudoku/web",
+    "build": "npm run build -w @mavisudoku/web",
+    "start": "npm run start -w @mavisudoku/web"
   }
 }

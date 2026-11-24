@@ -3,14 +3,49 @@
 Türkçe, ücretsiz, reklamla desteklenen sudoku sitesi ve mobil uygulaması.
 Kararların tamamı **MaviSudoku – Proje Özeti** dokümanında, ekran tasarımları **MaviSudoku – Web ve Mobil Tasarım** tuvalindedir.
 
-## Durum: 1. adım tamamlandı
+## Durum: 2. adım tamamlandı
 
 | Parça | Durum |
 |---|---|
-| Sudoku motoru (`paketler/motor`) | ✅ Yazıldı, 13 test geçiyor, tip kontrolü temiz |
-| Bulmaca havuzu aracı (`araclar/havuz-uret.ts`) | ✅ 8 seviye × 60 bulmaca üretildi (`veri/havuz.json`) |
-| Tek başına çöz ekranı (`uygulamalar/web-prototip`) | ✅ Oynanabilir önizleme, tarayıcıda test edildi |
-| Next.js web sitesi, sunucu, veritabanı | ⏳ Sonraki adım (paket kurulumu gerekiyor) |
+| Sudoku motoru (`paketler/motor`) | ✅ 13 test geçiyor |
+| Bulmaca havuzu (`veri/havuz.json`) | ✅ 8 seviye × 60 bulmaca; havuz bitince sunucu yenisini üretir |
+| Next.js web sitesi (`uygulamalar/web`) | ✅ Ana sayfa, oyun ekranı, sonuç ekranı, bulmaca sayfası (sıralama + yorumlar), günün sudokusu, kayıt, giriş |
+| Misafir sistemi | ✅ `misafir1234` adıyla oynar, sıralamaya girer; kayıt/giriş yapınca skorları hesabına aktarılır |
+| Üyelik | ✅ E-posta, ad soyad, rumuz, doğum yılı; sıralamada ad soyad veya rumuz, isteğe bağlı yaş; 18 yaş altı yalnızca rumuzla görünür |
+| Her bulmaca bir kişiye bir kez | ✅ Veritabanı kısıtıyla garanti; önce başkalarının oynadığı bulmacalar verilir |
+| Yorumlar ve küfür filtresi | ✅ Yalnızca bulmacayı bitiren üyeler yazar; ağır küfür reddedilir, şüpheli olan onaya düşer |
+| Sunucu testleri | ✅ 12 test geçiyor; tarayıcıda uçtan uca akış denendi (misafir oyna → sonuç → sıralama → kayıt + aktarım → yorum → çıkış/giriş, mobil) |
+| Taktikler, yazdırılabilir, genel sıralama, profil, yasal metinler | ⏳ "Yakında" sayfası; 3. ve 5. adımda |
+| Arkadaşınla oyna | ⏳ 4. adım |
+| Mobil uygulama | ⏳ 6. adım |
+
+## Web sitesini çalıştırma
+
+```bash
+npm install            # depo kökünde bir kez
+npm run dev            # http://localhost:3000
+npm test               # motor + sunucu testleri
+npm run build && npm start   # üretim derlemesi
+```
+
+Veritabanı ayarı ortam değişkenleriyle yapılır (şifreler `.env` dosyasına yazılır, git'e girmez):
+
+| Değişken | Ne işe yarar |
+|---|---|
+| `DATABASE_URL` | Gerçek PostgreSQL bağlantısı (yayında bu kullanılır) |
+| `PGLITE_DIR` | `DATABASE_URL` yoksa gömülü PostgreSQL (PGlite) dosyalarının klasörü; varsayılan `veri/pglite` |
+| `MS_DB=bellek` | Testler için bellekte geçici veritabanı |
+| `SITE_URL` | Sitenin adresi (varsayılan `https://mavisudoku.com`) |
+
+Tablolar ilk çalıştırmada kendiliğinden kurulur ve havuz yüklenir. Şema: `uygulamalar/web/sunucu/sema.sql`.
+
+## Bilinen sınırlar (yayından önce ele alınacak)
+
+- Çözüm, oyunu çevrimdışı ve gecikmesiz oynatmak için tarayıcıya karıştırılmış olarak gönderilir. Kodu okuyan biri çözebilir. Süre sunucuda da ölçülür ve seviyeye göre en kısa süre sınırı vardır; yine de ilk sıralardaki şüpheli süreleri yönetici ajanı incelemeli.
+- Hatalı giriş sınırı sunucu belleğinde tutulur; birden çok sunucuya geçilirse Redis'e taşınmalı.
+- Misafir kimliği tarayıcı çerezine bağlıdır; çerez silinirse misafir skoru kaybolur (sonuç ekranı bu yüzden kayda yönlendirir).
+- Şifre sıfırlama e-postası henüz yok (e-posta servisi seçilince eklenecek).
+- n8n ajan dosyaları henüz gerçek bir n8n kurulumunda denenmedi.
 
 ## Klasörler
 
@@ -33,6 +68,11 @@ uygulamalar/web-prototip/
 veri/havuz.json          Üretilmiş bulmacalar (her biri tek çözümlü)
 dagitim/                 Derlenmiş önizleme sayfası (git'e eklenmez, `npm run prototip` ile üretilir)
 otomasyon/n8n-ajanlar/   Yapay zekâ ajanlarının n8n iş akışları, görev tanımları ve kurulum rehberi
+uygulamalar/web/         Next.js web sitesi
+  app/                   Sayfalar ve API uçları (app/api/...)
+  bilesenler/            Ekran parçaları (üst menü, oyun ekranı, formlar)
+  sunucu/                Veritabanı, kimlik, oyun dağıtımı, sıralama, yorum, küfür filtresi
+  test/                  Sunucu testleri
 ```
 
 ## Çalıştırma
