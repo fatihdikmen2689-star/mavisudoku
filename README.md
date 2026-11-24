@@ -3,7 +3,7 @@
 Türkçe, ücretsiz, reklamla desteklenen sudoku sitesi ve mobil uygulaması.
 Kararların tamamı **MaviSudoku – Proje Özeti** dokümanında, ekran tasarımları **MaviSudoku – Web ve Mobil Tasarım** tuvalindedir.
 
-## Durum: 2. adım tamamlandı
+## Durum: 3. adım tamamlandı
 
 | Parça | Durum |
 |---|---|
@@ -14,8 +14,12 @@ Kararların tamamı **MaviSudoku – Proje Özeti** dokümanında, ekran tasarı
 | Üyelik | ✅ E-posta, ad soyad, rumuz, doğum yılı; sıralamada ad soyad veya rumuz, isteğe bağlı yaş; 18 yaş altı yalnızca rumuzla görünür |
 | Her bulmaca bir kişiye bir kez | ✅ Veritabanı kısıtıyla garanti; önce başkalarının oynadığı bulmacalar verilir |
 | Yorumlar ve küfür filtresi | ✅ Yalnızca bulmacayı bitiren üyeler yazar; ağır küfür reddedilir, şüpheli olan onaya düşer |
-| Sunucu testleri | ✅ 12 test geçiyor; tarayıcıda uçtan uca akış denendi (misafir oyna → sonuç → sıralama → kayıt + aktarım → yorum → çıkış/giriş, mobil) |
-| Taktikler, yazdırılabilir, genel sıralama, profil, yasal metinler | ⏳ "Yakında" sayfası; 3. ve 5. adımda |
+| Sunucu testleri | ✅ 20 test geçiyor; tarayıcıda uçtan uca akış denendi (misafir oyna → sonuç → sıralama → kayıt + aktarım → yorum → çıkış/giriş, mobil) |
+| Taktik yazıları (`/taktikler`) | ✅ 6 yazı: başlangıç, tek aday, gizli tekli, işaretleme, çıplak çift, X-Wing. Örnek ızgaraların mantığı testle doğrulanır (`test/sekiller.test.ts`) |
+| Sudoku kuralları sayfası | ✅ |
+| Çocuklar için yazdırılabilir PDF (`/yazdirilabilir`) | ✅ 4×4 / 6×6, 1–10 sayfa, kolaydan zora, yıldızlı zorluk, cevap anahtarı. Yazı tipi Türkçe karakterli Nunito (OFL lisanslı, `sunucu/yazitipi`). Çocuklara yönelik olduğu için bu sayfada reklam yok |
+| SEO | ✅ `sitemap.xml` (sabit sayfalar, seviyeler, taktikler, en çok çözülen 1000 bulmaca), `robots.txt`, sayfa başlık/açıklamaları |
+| Genel sıralama, profil, yasal metinler | ⏳ "Yakında" sayfası; 5. adımda (yasal metinler avukat kontrolüyle) |
 | Arkadaşınla oyna | ⏳ 4. adım |
 | Mobil uygulama | ⏳ 6. adım |
 

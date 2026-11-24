@@ -101,8 +101,8 @@ export default async function AnaSayfa() {
             <h2>Sudoku öğren</h2>
             <p className="kart-alt">Takıldığın yerde işine yarayacak taktikler</p>
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {[['Sudoku nasıl oynanır? Başlangıç rehberi', 'Kolay'], ['Gizli tekli yöntemi adım adım', 'Orta'], ['X-Wing tekniği ile zor bulmacaları aç', 'Zor']].map(([b, s]) => (
-                <li key={b}><Link href="/taktikler" style={{ display: 'block', padding: '12px 14px', borderRadius: 12, background: 'var(--zemin)', color: 'var(--lacivert)' }}><strong style={{ display: 'block' }}>{b}</strong><span style={{ fontSize: 13, color: 'var(--soluk)' }}>{s}</span></Link></li>
+              {[['Sudoku nasıl oynanır? Başlangıç rehberi', 'Kolay', 'sudoku-nasil-oynanir'], ['Gizli tekli yöntemi adım adım', 'Orta', 'gizli-tekli'], ['X-Wing tekniği ile zor bulmacaları aç', 'Usta', 'x-wing']].map(([b, s, slug]) => (
+                <li key={b}><Link href={`/taktikler/${slug}`} style={{ display: 'block', padding: '12px 14px', borderRadius: 12, background: 'var(--zemin)', color: 'var(--lacivert)' }}><strong style={{ display: 'block' }}>{b}</strong><span style={{ fontSize: 13, color: 'var(--soluk)' }}>{s}</span></Link></li>
               ))}
             </ul>
           </div>

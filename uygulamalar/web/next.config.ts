@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const ayar: NextConfig = {
   transpilePackages: ['@mavisudoku/motor'],
-  serverExternalPackages: ['@electric-sql/pglite', 'pg'],
+  serverExternalPackages: ['@electric-sql/pglite', 'pg', 'pdf-lib', '@pdf-lib/fontkit'],
   poweredByHeader: false,
   async headers() {
     return [{

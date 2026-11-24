@@ -200,3 +200,33 @@ fieldset.kutu legend { font-size: 14px; font-weight: 800; padding: 0 6px; }
   .ikili { grid-template-columns: 1fr; }
   .sonuc h2 { font-size: 30px; }
 }
+
+/* Taktik yazıları */
+.makale { max-width: 720px; }
+.makale h1 { margin: 6px 0 10px; font-size: 34px; line-height: 1.15; font-weight: 900; color: var(--lacivert); }
+.makale .giris-metni { font-size: 18px; color: #3B4A60; margin: 0 0 8px; }
+.makale h2 { margin: 30px 0 10px; font-size: 23px; font-weight: 900; color: var(--lacivert); }
+.makale p, .makale li { font-size: 16.5px; line-height: 1.7; color: #22314A; }
+.makale ul, .makale ol { padding-left: 22px; }
+.makale li { margin: 4px 0; }
+.makale .not-kutu { padding: 14px 16px; border-radius: 14px; background: #FFF6EC; border: 1px solid #F5D2AE; color: #5A2E00; font-size: 15px; margin: 18px 0; }
+.sekil { margin: 22px 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.sekil svg { width: 100%; max-width: 380px; height: auto; }
+.sekil figcaption { font-size: 14px; color: var(--soluk); text-align: center; max-width: 460px; }
+.sekil-uclu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 22px 0; }
+.sekil-uclu .sekil { margin: 0; }
+.taktik-liste { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.taktik-kart { display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 18px; background: #fff; border: 1px solid #E4EBF5; color: var(--lacivert); transition: transform .12s, box-shadow .12s; }
+.taktik-kart:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,37,69,.08); color: var(--lacivert); }
+.taktik-kart b { font-size: 18px; font-weight: 900; }
+.taktik-kart span { font-size: 14px; color: var(--soluk); line-height: 1.5; }
+@media (max-width: 600px) { .makale h1 { font-size: 28px; } .sekil-uclu { grid-template-columns: 1fr; } }
+
+/* Yazdırılabilir */
+.secim-izgara { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.secim { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 16px; border: 2px solid #D5E0EE; background: #fff; cursor: pointer; }
+.secim:has(input:checked) { border-color: var(--mavi); background: #F2F7FF; }
+.secim input { position: absolute; opacity: 0; }
+.secim:has(input:focus-visible) { outline: 3px solid var(--mavi-acik); outline-offset: 2px; }
+.secim b { font-size: 17px; font-weight: 900; color: var(--lacivert); }
+.secim span { font-size: 13.5px; color: var(--soluk); }
