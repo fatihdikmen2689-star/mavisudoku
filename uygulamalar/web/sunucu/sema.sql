@@ -82,3 +82,29 @@ CREATE TABLE IF NOT EXISTS gunluk (
   tarih         DATE PRIMARY KEY,
   bulmaca_id    INTEGER NOT NULL UNIQUE REFERENCES bulmacalar(id)
 );
+
+-- Arkadaşınla oyna: iki üye aynı bulmacayı aynı anda çözer, ilk bitiren kazanır
+CREATE TABLE IF NOT EXISTS maclar (
+  id            SERIAL PRIMARY KEY,
+  davet_eden    INTEGER NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  davet_edilen  INTEGER NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  seviye        TEXT NOT NULL,
+  durum         TEXT NOT NULL DEFAULT 'bekliyor' CHECK (durum IN ('bekliyor', 'reddedildi', 'iptal', 'suresi-doldu', 'basladi')),
+  bulmaca_id    INTEGER REFERENCES bulmacalar(id),
+  baslangic     TIMESTAMPTZ,
+  olusturma     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  yanit         TIMESTAMPTZ,
+  CHECK (davet_eden <> davet_edilen)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS maclar_tek_davet ON maclar (LEAST(davet_eden, davet_edilen), GREATEST(davet_eden, davet_edilen)) WHERE durum = 'bekliyor';
+CREATE INDEX IF NOT EXISTS maclar_edilen ON maclar (davet_edilen, durum);
+CREATE INDEX IF NOT EXISTS maclar_eden ON maclar (davet_eden, durum);
+
+CREATE TABLE IF NOT EXISTS mac_ilerleme (
+  mac_id        INTEGER NOT NULL REFERENCES maclar(id) ON DELETE CASCADE,
+  kullanici_id  INTEGER NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  dogru         INTEGER NOT NULL DEFAULT 0,
+  hata          INTEGER NOT NULL DEFAULT 0,
+  guncelleme    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (mac_id, kullanici_id)
+);

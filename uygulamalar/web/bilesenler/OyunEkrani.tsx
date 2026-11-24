@@ -9,6 +9,8 @@ import { duzen, metindenIzgara, SEVIYELER } from '@mavisudoku/motor';
 import type { SeviyeId } from '@mavisudoku/motor';
 import { sureMetni, sayi, SEVIYE_UI } from '../lib/bicim.ts';
 import type { VerilenOyun, BittiSonucu } from '../sunucu/oyun.ts';
+import type { MacDurumu } from '../sunucu/mac.ts';
+import { useMac } from './MacBaglantisi.tsx';
 
 interface Adim { i: number; deger: number; not: number }
 interface Ilerleme { girilen: number[]; notlar: number[]; hata: number; ipucu: number; gecen: number }
@@ -34,7 +36,7 @@ function cozumAc(k: string, anahtar: number): number[] {
 
 export interface OyuncuOzetiIstemci { cozulen: number; enIyi: number | null }
 
-export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId; bulmacaId?: number; ozet: OyuncuOzetiIstemci; uye: boolean }) {
+export function OyunEkrani({ seviye, bulmacaId, ozet, uye, mac }: { seviye: SeviyeId; bulmacaId?: number; ozet: OyuncuOzetiIstemci; uye: boolean; mac?: { id: number; rakip: string } }) {
   const [oyun, setOyun] = useState<VerilenOyun | null>(null);
   const [hataMesaji, setHataMesaji] = useState<string | null>(null);
   const [ilerleme, setIlerleme] = useState<Ilerleme | null>(null);
@@ -64,7 +66,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
       const n = v.bulmaca.length;
       const kayitli = oku<Ilerleme>(ilerlemeAnahtar(v.oyunId));
       setIlerleme(kayitli && kayitli.girilen.length === n ? kayitli
-        : { girilen: new Array(n).fill(0), notlar: new Array(n).fill(0), hata: 0, ipucu: 0, gecen: v.devam ? Math.min(v.gecenSaniye, 3600) : 0 });
+        : { girilen: new Array(n).fill(0), notlar: new Array(n).fill(0), hata: 0, ipucu: 0, gecen: v.devam ? Math.max(0, Math.min(v.gecenSaniye, 3600)) : 0 });
       setOyun(v);
       setOyuncuAdi(veri.oyuncu?.ad ?? '');
       const b = metindenIzgara(v.bulmaca);
@@ -88,6 +90,10 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
   const cozum = useMemo(() => (oyun ? cozumAc(oyun.cozumK, oyun.oyunId) : []), [oyun]);
   const d = useMemo(() => duzen((oyun ? Math.round(Math.sqrt(oyun.bulmaca.length)) : 9) as 4 | 6 | 9), [oyun]);
   const bitti = !!sonuc;
+  const dogruSayisi = ilerleme ? bulmaca.filter((v, i) => !v && ilerleme.girilen[i] === cozum[i]).length : 0;
+  const macB = useMac(mac?.id, dogruSayisi, ilerleme?.hata ?? 0);
+  /** Maç modunda geri sayım bitene kadar tahta kapalı */
+  const bekliyor = !!mac && !macB.basladi;
 
   // İlerlemeyi kaydet
   useEffect(() => { if (oyun && ilerleme && !bitti) yaz(ilerlemeAnahtar(oyun.oyunId), ilerleme); }, [oyun, ilerleme, bitti]);
@@ -95,12 +101,21 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
 
   // Süre: duraklatınca ve sekme gizlenince durur
   useEffect(() => {
-    if (!oyun || bitti || duraklat) return;
+    if (!oyun || bitti || duraklat || mac) return;
     const t = setInterval(() => {
       if (!document.hidden) setIlerleme((p) => (p ? { ...p, gecen: p.gecen + 1 } : p));
     }, 1000);
     return () => clearInterval(t);
-  }, [oyun, bitti, duraklat]);
+  }, [oyun, bitti, duraklat, mac]);
+  // Maçta süre, iki oyuncu için aynı olan başlangıç anından hesaplanır ve sekme gizlense de işler
+  const baslangicYerel = macB.baslangicYerel;
+  useEffect(() => {
+    if (!mac || !oyun || bitti || baslangicYerel === null) return;
+    const ayarla = () => setIlerleme((p) => (p ? { ...p, gecen: Math.max(0, Math.floor((Date.now() - baslangicYerel) / 1000)) } : p));
+    ayarla();
+    const t = setInterval(ayarla, 500);
+    return () => clearInterval(t);
+  }, [mac, oyun, bitti, baslangicYerel]);
 
   const deger = (p: Ilerleme, i: number) => bulmaca[i] || p.girilen[i];
 
@@ -142,7 +157,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
   }, [oyun, ilerleme, sonuc, cozum, bulmaca, bitir]);
 
   const rakamGir = (v: number) => {
-    if (!oyun || bitti || duraklat || secili < 0 || bulmaca[secili]) return;
+    if (!oyun || bitti || duraklat || bekliyor || secili < 0 || bulmaca[secili]) return;
     guncelle((p) => {
       const i = secili;
       if (notModu ? !!p.girilen[i] : p.girilen[i] === v) return null;
@@ -159,7 +174,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
     });
   };
   const temizle = () => {
-    if (bitti || secili < 0 || bulmaca[secili]) return;
+    if (bitti || bekliyor || secili < 0 || bulmaca[secili]) return;
     guncelle((p) => {
       if (!p.girilen[secili] && !p.notlar[secili]) return null;
       gecmis.current.push({ i: secili, deger: p.girilen[secili], not: p.notlar[secili] });
@@ -179,7 +194,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
     });
   };
   const ipucuVer = () => {
-    if (!oyun || bitti || duraklat || !ilerleme) return;
+    if (!oyun || bitti || duraklat || mac || !ilerleme) return;
     let i = secili;
     if (i < 0 || bulmaca[i] || ilerleme.girilen[i] === cozum[i]) i = cozum.findIndex((v, k) => !bulmaca[k] && ilerleme.girilen[k] !== v);
     if (i < 0) return;
@@ -207,7 +222,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
       } else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') { temizle(); e.preventDefault(); }
       else if (e.key === 'n' || e.key === 'N') setNotModu((x) => !x);
       else if (e.key === 'z' || e.key === 'Z') { geriAl(); e.preventDefault(); }
-      else if (e.key === 'p' || e.key === 'P') setDuraklat((x) => !x);
+      else if ((e.key === 'p' || e.key === 'P') && !mac) setDuraklat((x) => !x);
     };
     window.addEventListener('keydown', dinle);
     return () => window.removeEventListener('keydown', dinle);
@@ -231,15 +246,15 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
       <div className="oyun-cubuk">
         <div className="oyun-cubuk-ic">
           <h1>{oyun ? `Bulmaca #${oyun.bulmacaId}` : 'Bulmaca yükleniyor…'}</h1>
-          <span className="rozet tek">TEK BAŞINA</span>
+          <span className="rozet tek">{mac ? `MAÇ · ${mac.rakip}` : 'TEK BAŞINA'}</span>
           <span className="rozet">{ui.ad}</span>
           <div className="sure-kutu">
             <span className="sure" role="timer" aria-label="Geçen süre">{ayar.sureGizle ? '––:––' : sureMetni(p?.gecen ?? 0)}</span>
-            <button type="button" className="kare-btn" aria-label={duraklat ? 'Devam et' : 'Duraklat'} onClick={() => !bitti && setDuraklat((x) => !x)}>
+            {!mac && <button type="button" className="kare-btn" aria-label={duraklat ? 'Devam et' : 'Duraklat'} onClick={() => !bitti && setDuraklat((x) => !x)}>
               {duraklat
                 ? <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
                 : <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>}
-            </button>
+            </button>}
           </div>
         </div>
       </div>
@@ -251,11 +266,13 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
               {hataMesaji}{' '}
               {p && oyun && !sonuc && cozum.every((v, i) => (bulmaca[i] || p.girilen[i]) === v)
                 ? <button type="button" className="ikincil-btn" style={{ minHeight: 36, marginLeft: 8 }} onClick={() => void bitir(p)}>Tekrar gönder</button>
-                : <button type="button" className="ikincil-btn" style={{ minHeight: 36, marginLeft: 8 }} onClick={() => void yukle(true)}>Yeni bulmaca</button>}
+                : !mac && <button type="button" className="ikincil-btn" style={{ minHeight: 36, marginLeft: 8 }} onClick={() => void yukle(true)}>Yeni bulmaca</button>}
             </div>
           )}
 
-          {sonuc && <SonucPaneli sonuc={sonuc} uye={uye} oyuncuAdi={oyuncuAdi} onSiradaki={() => void yukle(true)} />}
+          {mac && macB.hata && !sonuc && <p className="uyari genislik" role="status" style={{ margin: 0 }}>{macB.hata}</p>}
+          {sonuc && mac && <MacSonucu durum={macB.durum} rakip={mac.rakip} />}
+          {sonuc && <SonucPaneli sonuc={sonuc} uye={uye} oyuncuAdi={oyuncuAdi} onSiradaki={() => void yukle(true)} mac={!!mac} />}
 
           {!sonuc && oyun && p && (
             <div className="genislik" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -264,7 +281,10 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
                 <span>İpucu: <b>{p.ipucu}</b></span>
                 <span>Kalan hücre: <b style={{ color: 'var(--mavi)' }}>{kalan}</b></span>
               </div>
-              {ipucuMetni && (
+              {mac && macB.durum?.rakip.bitti && (
+                <p className="uyari" role="status" style={{ margin: 0 }}><strong>{mac.rakip}</strong> bulmacayı {sureMetni(macB.durum.rakip.sure)} sürede bitirdi. Sen de bitir; süren bulmacanın sıralamasına girer.</p>
+              )}
+              {ipucuMetni && !mac && (
                 <div className="ipucu-balon" role="dialog" aria-labelledby="ipucu-baslik">
                   <span className="no">{ipucuAdimi}/3</span>
                   <div style={{ flex: '1 1 240px' }}><p className="b" id="ipucu-baslik">{ipucuMetni[0]}</p><p className="m">{ipucuMetni[1]}</p></div>
@@ -274,7 +294,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
                   </div>
                 </div>
               )}
-              <div className={`tahta-alani${duraklat ? ' duraklatildi' : ''}`}>
+              <div className={`tahta-alani${duraklat || bekliyor ? ' duraklatildi' : ''}`}>
                 <div className={`tahta n${d.n}`} role="grid" aria-label="Sudoku tahtası" style={{ gridTemplateColumns: `repeat(${d.n}, minmax(0, 1fr))` }}>
                   {bulmaca.map((_, i) => {
                     const v = deger(p, i);
@@ -299,6 +319,13 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
                     );
                   })}
                 </div>
+                {bekliyor && (
+                  <div className="perde" role="status" aria-live="polite"><div>
+                    <p>{mac!.rakip} ile maç</p>
+                    <span className="geri-sayim">{macB.durum ? macB.kalanSaniye : '…'}</span>
+                    <p style={{ fontSize: 15, fontWeight: 600, marginTop: 10 }}>{macB.durum ? 'saniye sonra başlıyor' : 'Maç bilgisi alınıyor'}</p>
+                  </div></div>
+                )}
                 {duraklat && (
                   <div className="perde"><div><p>Oyun duraklatıldı</p><button type="button" className="ana-btn" onClick={() => setDuraklat(false)}>Devam et</button></div></div>
                 )}
@@ -320,7 +347,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
                 <button type="button" onClick={geriAl}>Geri al</button>
                 <button type="button" onClick={temizle}>Sil</button>
                 <button type="button" className={notModu ? 'acik' : ''} aria-pressed={notModu} onClick={() => setNotModu((x) => !x)}>{notModu ? 'Not: Açık' : 'Not: Kapalı'}</button>
-                <button type="button" onClick={ipucuVer}>İpucu</button>
+                {!mac && <button type="button" onClick={ipucuVer}>İpucu</button>}
               </div>
               {gonderiliyor && <p className="bilgi" role="status">Çözümün kontrol ediliyor…</p>}
             </div>
@@ -330,14 +357,15 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
         </section>
 
         <aside className="yan-sutun">
-          <section className="kart" aria-labelledby="bilgi-b">
+          {mac && <RakipKarti durum={macB.durum} rakip={mac.rakip} benimDogru={dogruSayisi} benimHata={p?.hata ?? 0} bitti={bitti} />}
+          {!mac && <section className="kart" aria-labelledby="bilgi-b">
             <h2 id="bilgi-b">Bu seviyede sen</h2>
             <dl className="ist">
               <div><dt>Çözülen</dt><dd>{ozet.cozulen + (sonuc ? 1 : 0)}</dd></div>
               <div><dt>En iyi süre</dt><dd>{sureMetni(sonuc ? Math.min(ozet.enIyi ?? sonuc.sure, sonuc.sure) : ozet.enIyi)}</dd></div>
             </dl>
-          </section>
-          <section className="kart" aria-labelledby="seviye-b">
+          </section>}
+          {!mac && <section className="kart" aria-labelledby="seviye-b">
             <h2 id="seviye-b">Seviye seç</h2>
             <nav className="seviye-listesi" aria-label="Seviyeler">
               {(Object.keys(SEVIYELER) as SeviyeId[]).map((s) => (
@@ -345,13 +373,13 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
               ))}
             </nav>
             <p style={{ margin: '12px 0 0', fontSize: 13, color: 'var(--soluk)' }}>Her seviyede daha önce açmadığın bir bulmaca gelir. Yarım kalan bulmacan kaydedilir.</p>
-          </section>
+          </section>}
           <section className="kart" aria-labelledby="ayar-b">
             <h2 id="ayar-b">Oyun ayarları</h2>
             <label className="ayar">Hataları hemen göster<input type="checkbox" checked={ayar.hataGoster} onChange={(e) => setAyar({ ...ayar, hataGoster: e.target.checked })} /></label>
             <label className="ayar">Aynı rakamları vurgula<input type="checkbox" checked={ayar.ayniVurgula} onChange={(e) => setAyar({ ...ayar, ayniVurgula: e.target.checked })} /></label>
             <label className="ayar">Süreyi gizle<input type="checkbox" checked={ayar.sureGizle} onChange={(e) => setAyar({ ...ayar, sureGizle: e.target.checked })} /></label>
-            <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--soluk)' }}>Klavye: rakamlar, ok tuşları, Sil, N (not), Z (geri al), P (duraklat)</p>
+            <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--soluk)' }}>Klavye: rakamlar, ok tuşları, Sil, N (not), Z (geri al){mac ? '' : ', P (duraklat)'}</p>
           </section>
           <div className="reklam uzun" role="complementary" aria-label="Reklam alanı">Reklam alanı</div>
         </aside>
@@ -360,7 +388,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye }: { seviye: SeviyeId;
   );
 }
 
-function SonucPaneli({ sonuc, uye, oyuncuAdi, onSiradaki }: { sonuc: BittiSonucu; uye: boolean; oyuncuAdi: string; onSiradaki: () => void }) {
+function SonucPaneli({ sonuc, uye, oyuncuAdi, onSiradaki, mac = false }: { sonuc: BittiSonucu; uye: boolean; oyuncuAdi: string; onSiradaki: () => void; mac?: boolean }) {
   const ui = SEVIYE_UI[sonuc.seviye];
   const paylasMetni = `MaviSudoku'da ${ui.ad} bir bulmacayı ${sureMetni(sonuc.sure)} sürede çözdüm. Sen geçebilir misin?`;
   const paylasUrl = typeof window !== 'undefined' ? `${window.location.origin}/bulmaca/${sonuc.bulmacaId}` : '';
@@ -370,7 +398,7 @@ function SonucPaneli({ sonuc, uye, oyuncuAdi, onSiradaki }: { sonuc: BittiSonucu
         <span>{ui.ad} · {sonuc.cozulenSeviyede} çözüldü</span>
         {sonuc.rekor && <span className="rekor">Yeni kişisel rekor!</span>}
       </div>
-      <h2 id="tebrik">Tebrikler, çözdün!</h2>
+      <h2 id="tebrik">{mac ? 'Bulmacayı çözdün' : 'Tebrikler, çözdün!'}</h2>
       <div className="sonuc-kutular">
         <div><small>Süre</small><strong>{sureMetni(sonuc.sure)}</strong><em>{sonuc.oncekiEnIyi ? `Önceki en iyin ${sureMetni(sonuc.oncekiEnIyi)}` : 'Bu seviyedeki ilk çözümün'}</em></div>
         <div><small>Sıralamada</small><strong>{sonuc.sira ? `${sayi(sonuc.sira)}.` : '—'}</strong><em>{sonuc.siralamada ? `${sayi(sonuc.toplam)} kişi içinde` : 'Sıralamaya alınmadı'}</em></div>
@@ -385,10 +413,55 @@ function SonucPaneli({ sonuc, uye, oyuncuAdi, onSiradaki }: { sonuc: BittiSonucu
         </div>
       )}
       <div className="sonuc-btnlar">
-        <button type="button" className="ana-btn" onClick={onSiradaki}>Sıradaki bulmaca</button>
+        {mac ? <Link className="ana-btn" href="/arkadas">Yeni maç</Link> : <button type="button" className="ana-btn" onClick={onSiradaki}>Sıradaki bulmaca</button>}
         <Link className="koyu-btn" href={`/bulmaca/${sonuc.bulmacaId}`}>{uye ? 'Sıralama ve yorumlar' : 'Sıralamayı gör'}</Link>
         <a className="koyu-btn" href={`https://wa.me/?text=${encodeURIComponent(`${paylasMetni} ${paylasUrl}`)}`} target="_blank" rel="noopener noreferrer">WhatsApp'ta paylaş</a>
       </div>
+    </section>
+  );
+}
+
+function Cubuk({ dogru, toplam, rakip = false, etiket }: { dogru: number; toplam: number; rakip?: boolean; etiket: string }) {
+  const yuzde = toplam ? Math.round((dogru / toplam) * 100) : 0;
+  return (
+    <div className={`rakip-cubuk${rakip ? ' rakip' : ''}`} role="progressbar" aria-label={etiket} aria-valuemin={0} aria-valuemax={100} aria-valuenow={yuzde}>
+      <span style={{ width: `${yuzde}%` }} />
+    </div>
+  );
+}
+
+function RakipKarti({ durum, rakip, benimDogru, benimHata, bitti }: { durum: MacDurumu | null; rakip: string; benimDogru: number; benimHata: number; bitti: boolean }) {
+  const toplam = durum?.bosHucre ?? 0;
+  const r = durum?.rakip;
+  return (
+    <section className="kart" aria-labelledby="rakip-b" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <h2 id="rakip-b" style={{ margin: 0 }}>Maç durumu</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}><strong>Sen</strong><span>{bitti ? 'Bitirdin' : `${benimDogru}/${toplam} · ${benimHata} hata`}</span></div>
+        <Cubuk dogru={bitti ? toplam : benimDogru} toplam={toplam} etiket="Senin ilerlemen" />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}><strong>{rakip}</strong><span>{r?.bitti ? `Bitirdi · ${sureMetni(r.sure)}` : `${r?.dogru ?? 0}/${toplam} · ${r?.hata ?? 0} hata`}</span></div>
+        <Cubuk dogru={r?.dogru ?? 0} toplam={toplam} rakip etiket={`${rakip} ilerlemesi`} />
+      </div>
+      <p style={{ margin: 0, fontSize: 12.5, color: 'var(--soluk)' }}>Doğru yerleştirilen hücreler sayılır. Maçta ipucu ve duraklatma yoktur.</p>
+    </section>
+  );
+}
+
+function MacSonucu({ durum, rakip }: { durum: MacDurumu | null; rakip: string }) {
+  const s = durum?.ben.bitti ? durum.sonuc : null;
+  const baslik = s === 'kazandin' ? 'Kazandın! 🏆' : s === 'kaybettin' ? `${rakip} önce bitirdi` : 'Sonuç hesaplanıyor…';
+  const alt = s === 'kazandin'
+    ? (durum!.rakip.bitti ? `${rakip} ${sureMetni(durum!.rakip.sure)} sürede bitirdi.` : `${rakip} hâlâ çözüyor.`)
+    : s === 'kaybettin' ? `${rakip} ${sureMetni(durum!.rakip.sure)} sürede bitirdi. Rövanş ister misin?` : '';
+  return (
+    <section className={`kart genislik`} role="status" aria-live="polite" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between', borderColor: s === 'kazandin' ? '#5BC48A' : undefined, borderWidth: 2 }}>
+      <div>
+        <strong style={{ display: 'block', fontSize: 24, fontWeight: 900, color: 'var(--lacivert)' }}>{baslik}</strong>
+        {alt && <span style={{ fontSize: 14, color: 'var(--soluk)' }}>{alt}</span>}
+      </div>
+      <Link className="btn-mavi" style={{ minHeight: 46, padding: '0 20px' }} href={`/arkadas?rakip=${encodeURIComponent(rakip)}`}>Rövanş</Link>
     </section>
   );
 }

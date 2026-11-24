@@ -81,7 +81,7 @@ export async function oyunVer(db: Veritabani, o: Oyuncu, seviye: SeviyeId, bulma
   }
   if (!yeniIste) {
     const yarim = await db.sorgu<OyunSatiri>(
-      `${OYUN_SEC} WHERE o.${sutun} = $1 AND o.bitis IS NULL AND b.seviye = $2 ORDER BY o.baslangic DESC LIMIT 1`, [id, seviye]);
+      `${OYUN_SEC} WHERE o.${sutun} = $1 AND o.bitis IS NULL AND b.seviye = $2 AND NOT EXISTS (SELECT 1 FROM maclar m WHERE m.bulmaca_id = o.bulmaca_id AND m.durum = 'basladi') ORDER BY o.baslangic DESC LIMIT 1`, [id, seviye]);
     if (yarim.length) return cikti(yarim[0], true);
   }
   for (let deneme = 0; deneme < 3; deneme++) {
@@ -92,13 +92,19 @@ export async function oyunVer(db: Veritabani, o: Oyuncu, seviye: SeviyeId, bulma
        ORDER BY b.oynanma DESC, b.id LIMIT 1`, [seviye, id, bugun()]);
     if (aday.length) return oyunAc(db, o, aday[0].id);
     // Havuz bitti: anında yeni bulmaca üret (gerçekte arka planda havuz doldurulur)
-    const yeni = bulmacaUret(seviye, Math.floor(Math.random() * 2 ** 31));
-    if (yeni) {
-      await db.sorgu(`INSERT INTO bulmacalar (seviye, bulmaca, cozum, ipucu, tohum) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (bulmaca) DO NOTHING`,
-        [seviye, yeni.bulmaca, yeni.cozum, yeni.ipucuSayisi, yeni.tohum]);
-    }
+    await havuzaBulmacaEkle(db, seviye);
   }
   throw new OyunHatasi('Şu an yeni bulmaca hazırlanamadı, birazdan tekrar dene.', 503);
+}
+
+/** Havuza yeni bir bulmaca üretip ekler (havuz tükendiğinde) */
+export async function havuzaBulmacaEkle(db: Veritabani, seviye: SeviyeId): Promise<number | null> {
+  const yeni = bulmacaUret(seviye, Math.floor(Math.random() * 2 ** 31));
+  if (!yeni) return null;
+  const r = await db.sorgu<{ id: number }>(
+    `INSERT INTO bulmacalar (seviye, bulmaca, cozum, ipucu, tohum) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (bulmaca) DO NOTHING RETURNING id`,
+    [seviye, yeni.bulmaca, yeni.cozum, yeni.ipucuSayisi, yeni.tohum]);
+  return r[0]?.id ?? null;
 }
 
 export interface BitirGirdisi { cevap: string; sure: number; hata: number; ipucu: number }
@@ -281,7 +287,7 @@ export async function oyuncuOzeti(db: Veritabani, o: Oyuncu | null): Promise<Oyu
      WHERE o.${sutun} = $1 AND o.bitis IS NOT NULL GROUP BY b.seviye`, [id]);
   const y = await db.sorgu<{ seviye: string; bulmaca_id: number; baslangic: Date }>(
     `SELECT b.seviye, o.bulmaca_id, o.baslangic FROM oyunlar o JOIN bulmacalar b ON b.id = o.bulmaca_id
-     WHERE o.${sutun} = $1 AND o.bitis IS NULL ORDER BY o.baslangic DESC LIMIT 1`, [id]);
+     WHERE o.${sutun} = $1 AND o.bitis IS NULL AND NOT EXISTS (SELECT 1 FROM maclar m WHERE m.bulmaca_id = o.bulmaca_id AND m.durum = 'basladi') ORDER BY o.baslangic DESC LIMIT 1`, [id]);
   const seviyeler: OyuncuOzeti['seviyeler'] = {};
   for (const s of r) seviyeler[s.seviye as SeviyeId] = { cozulen: s.cozulen, enIyi: s.en_iyi };
   return {

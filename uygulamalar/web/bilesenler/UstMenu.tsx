@@ -1,12 +1,16 @@
 import Link from 'next/link';
 import type { Oyuncu } from '../sunucu/kimlik.ts';
 import { CikisButonu } from './CikisButonu.tsx';
+import { DavetBildirimi } from './DavetBildirimi.tsx';
+import { veritabani } from '../sunucu/db.ts';
+import { bekleyenDavetSayisi } from '../sunucu/mac.ts';
 
-export type MenuAktif = 'gunluk' | 'seviyeler' | 'siralama' | 'taktikler' | 'yazdirilabilir' | null;
+export type MenuAktif = 'gunluk' | 'seviyeler' | 'arkadas' | 'siralama' | 'taktikler' | 'yazdirilabilir' | null;
 
 const MENU: { id: Exclude<MenuAktif, null>; ad: string; href: string }[] = [
   { id: 'gunluk', ad: 'Günlük Sudoku', href: '/gunluk' },
   { id: 'seviyeler', ad: 'Seviyeler', href: '/#seviyeler' },
+  { id: 'arkadas', ad: 'Arkadaşla Oyna', href: '/arkadas' },
   { id: 'siralama', ad: 'Sıralama', href: '/siralama' },
   { id: 'taktikler', ad: 'Taktikler', href: '/taktikler' },
   { id: 'yazdirilabilir', ad: 'Yazdırılabilir', href: '/yazdirilabilir' },
@@ -25,14 +29,15 @@ export function Logo() {
   );
 }
 
-export function UstMenu({ oyuncu, aktif = null, seri = 0 }: { oyuncu: Oyuncu | null; aktif?: MenuAktif; seri?: number }) {
+export async function UstMenu({ oyuncu, aktif = null, seri = 0 }: { oyuncu: Oyuncu | null; aktif?: MenuAktif; seri?: number }) {
+  const davet = oyuncu?.tip === 'uye' ? await bekleyenDavetSayisi(await veritabani(), oyuncu) : 0;
   return (
     <header className="ust">
       <div className="ust-ic">
         <Logo />
         <nav className="menu" aria-label="Ana menü">
           {MENU.map((m) => (
-            <Link key={m.id} href={m.href} aria-current={aktif === m.id ? 'page' : undefined}>{m.ad}</Link>
+            <Link key={m.id} href={m.href} aria-current={aktif === m.id ? 'page' : undefined}>{m.ad}{m.id === 'arkadas' && davet > 0 && <span className="rozet-sayi" aria-label={`${davet} yeni davet`}>{davet}</span>}</Link>
           ))}
         </nav>
         <div className="ust-sag">
@@ -51,6 +56,7 @@ export function UstMenu({ oyuncu, aktif = null, seri = 0 }: { oyuncu: Oyuncu | n
           )}
         </div>
       </div>
+      {oyuncu?.tip === 'uye' && <DavetBildirimi />}
     </header>
   );
 }

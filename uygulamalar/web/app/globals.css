@@ -230,3 +230,24 @@ fieldset.kutu legend { font-size: 14px; font-weight: 800; padding: 0 6px; }
 .secim:has(input:focus-visible) { outline: 3px solid var(--mavi-acik); outline-offset: 2px; }
 .secim b { font-size: 17px; font-weight: 900; color: var(--lacivert); }
 .secim span { font-size: 13.5px; color: var(--soluk); }
+
+/* Arkadaşla oyna */
+.rozet-sayi { display: inline-grid; place-items: center; min-width: 20px; height: 20px; margin-left: 6px; padding: 0 6px; border-radius: 999px; background: var(--turuncu); color: var(--turuncu-yazi); font-size: 12px; font-weight: 900; vertical-align: 1px; }
+.davet-bildirim { position: fixed; z-index: 60; right: 20px; top: 76px; max-width: 360px; display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: #fff; color: var(--lacivert); box-shadow: 0 12px 40px rgba(11,37,69,.25); border: 2px solid var(--mavi-acik); }
+.davet-bildirim p { margin: 0; font-size: 15px; }
+.davet-bildirim div { display: flex; gap: 8px; align-items: center; }
+.davet-bildirim .btn-cizgi { color: var(--lacivert); border-color: #B8C7DB; }
+.davet-bildirim .kapat { margin-left: auto; width: 36px; height: 36px; border: 0; background: transparent; font-size: 22px; color: var(--soluk); cursor: pointer; }
+.mac-satir { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 14px; border-radius: 14px; background: var(--zemin); }
+.mac-satir .ad { font-weight: 900; color: var(--lacivert); }
+.mac-satir .ek { font-size: 13px; color: var(--soluk); flex: 1 1 140px; }
+.mac-satir button, .mac-satir a.btn-mavi { min-height: 38px; }
+.sonuc-etiket { font-weight: 900; font-size: 13px; padding: 3px 10px; border-radius: 999px; }
+.sonuc-etiket.kazandin { background: #DDF5E6; color: #0F6B3A; }
+.sonuc-etiket.kaybettin { background: #FDE3E1; color: #A3241A; }
+.sonuc-etiket.notr { background: #E6ECF4; color: var(--soluk); }
+.rakip-cubuk { height: 12px; border-radius: 999px; background: #E4EBF5; overflow: hidden; }
+.rakip-cubuk span { display: block; height: 100%; border-radius: 999px; background: var(--mavi-acik); transition: width .4s; }
+.rakip-cubuk.rakip span { background: var(--turuncu); }
+.geri-sayim { display: block; font-size: 72px; font-weight: 900; line-height: 1; color: var(--mavi); font-variant-numeric: tabular-nums; }
+@media (max-width: 600px) { .davet-bildirim { left: 12px; right: 12px; top: auto; bottom: 12px; max-width: none; } }

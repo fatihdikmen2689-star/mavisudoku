@@ -3,7 +3,7 @@
 Türkçe, ücretsiz, reklamla desteklenen sudoku sitesi ve mobil uygulaması.
 Kararların tamamı **MaviSudoku – Proje Özeti** dokümanında, ekran tasarımları **MaviSudoku – Web ve Mobil Tasarım** tuvalindedir.
 
-## Durum: 3. adım tamamlandı
+## Durum: 4. adım tamamlandı
 
 | Parça | Durum |
 |---|---|
@@ -14,13 +14,13 @@ Kararların tamamı **MaviSudoku – Proje Özeti** dokümanında, ekran tasarı
 | Üyelik | ✅ E-posta, ad soyad, rumuz, doğum yılı; sıralamada ad soyad veya rumuz, isteğe bağlı yaş; 18 yaş altı yalnızca rumuzla görünür |
 | Her bulmaca bir kişiye bir kez | ✅ Veritabanı kısıtıyla garanti; önce başkalarının oynadığı bulmacalar verilir |
 | Yorumlar ve küfür filtresi | ✅ Yalnızca bulmacayı bitiren üyeler yazar; ağır küfür reddedilir, şüpheli olan onaya düşer |
-| Sunucu testleri | ✅ 20 test geçiyor; tarayıcıda uçtan uca akış denendi (misafir oyna → sonuç → sıralama → kayıt + aktarım → yorum → çıkış/giriş, mobil) |
+| Sunucu testleri | ✅ 25 test geçiyor (maç dahil); iki tarayıcıyla gerçek maç denendi; tarayıcıda uçtan uca akış denendi (misafir oyna → sonuç → sıralama → kayıt + aktarım → yorum → çıkış/giriş, mobil) |
 | Taktik yazıları (`/taktikler`) | ✅ 6 yazı: başlangıç, tek aday, gizli tekli, işaretleme, çıplak çift, X-Wing. Örnek ızgaraların mantığı testle doğrulanır (`test/sekiller.test.ts`) |
 | Sudoku kuralları sayfası | ✅ |
 | Çocuklar için yazdırılabilir PDF (`/yazdirilabilir`) | ✅ 4×4 / 6×6, 1–10 sayfa, kolaydan zora, yıldızlı zorluk, cevap anahtarı. Yazı tipi Türkçe karakterli Nunito (OFL lisanslı, `sunucu/yazitipi`). Çocuklara yönelik olduğu için bu sayfada reklam yok |
 | SEO | ✅ `sitemap.xml` (sabit sayfalar, seviyeler, taktikler, en çok çözülen 1000 bulmaca), `robots.txt`, sayfa başlık/açıklamaları |
 | Genel sıralama, profil, yasal metinler | ⏳ "Yakında" sayfası; 5. adımda (yasal metinler avukat kontrolüyle) |
-| Arkadaşınla oyna | ⏳ 4. adım |
+| Arkadaşınla oyna (`/arkadas`, `/mac/[id]`) | ✅ Yalnızca üyeler; rumuzla davet (10 dk geçerli), 5 sn geri sayım, ikisinin de açmadığı aynı bulmaca, rakibin ilerlemesi canlı, ilk doğru çözen kazanır. Menüde davet rozeti ve her sayfada davet bildirimi. Maçta ipucu ve duraklatma yok; süreler bulmacanın sıralamasına girer. Kötüye kullanıma karşı: saatte 20 davet, aynı kişi günde 3 kez reddederse yeni davet yok |
 | Mobil uygulama | ⏳ 6. adım |
 
 ## Web sitesini çalıştırma
@@ -48,6 +48,7 @@ Tablolar ilk çalıştırmada kendiliğinden kurulur ve havuz yüklenir. Şema: 
 - Çözüm, oyunu çevrimdışı ve gecikmesiz oynatmak için tarayıcıya karıştırılmış olarak gönderilir. Kodu okuyan biri çözebilir. Süre sunucuda da ölçülür ve seviyeye göre en kısa süre sınırı vardır; yine de ilk sıralardaki şüpheli süreleri yönetici ajanı incelemeli.
 - Hatalı giriş sınırı sunucu belleğinde tutulur; birden çok sunucuya geçilirse Redis'e taşınmalı.
 - Misafir kimliği tarayıcı çerezine bağlıdır; çerez silinirse misafir skoru kaybolur (sonuç ekranı bu yüzden kayda yönlendirir).
+- Maç durumu 2 saniyede bir sorgulanarak güncellenir (WebSocket gerektirmez, her barındırmada çalışır). Çok sayıda eşzamanlı maçta sunucu yükü izlenmeli; gerekirse WebSocket'e geçilir.
 - Şifre sıfırlama e-postası henüz yok (e-posta servisi seçilince eklenecek).
 - n8n ajan dosyaları henüz gerçek bir n8n kurulumunda denenmedi.
 
