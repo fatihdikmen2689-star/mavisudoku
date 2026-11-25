@@ -3,104 +3,104 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tek başına çöz · MaviSudoku</title>
+<title>MaviSudoku demo</title>
 <meta name="description" content="Ücretsiz online sudoku: Mini, Kolay, Orta, Zor, Uzman, Usta ve Ekstrem seviyelerde her seferinde yeni bir bulmaca.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--lacivert:#0B2545;--lacivert2:#16365F;--mavi:#1D5FD1;--acik:#EEF4FF;--zemin:#F3F7FC;--cizgi:#DCE6F3;--yazi:#0F1B2D;--soluk:#4A5A72;--turuncu:#F28C28;--turuncu-golge:#C2661A;--kirmizi:#B42318}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{margin:0;background:var(--zemin);color:var(--yazi);font-family:Nunito,system-ui,sans-serif}
+body{margin:0;background:var(--zemin);color:var(--yazi);font-family:Inter,system-ui,sans-serif}
 a{color:var(--mavi);text-decoration:none}a:hover{color:#0B3F9E}
 button{font-family:inherit;cursor:pointer}
 button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #7FB2FF;outline-offset:2px}
 .ust{background:var(--lacivert);color:#fff}
 .ust-ic{max-width:1200px;margin:0 auto;padding:12px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px}
-.logo{display:flex;align-items:center;gap:10px;color:#fff;font-size:22px;font-weight:900}
+.logo{display:flex;align-items:center;gap:10px;color:#fff;font-size:22px;font-weight:700}
 .logo span{color:#7FB2FF}
 .menu{display:flex;flex-wrap:wrap;gap:4px;flex:1 1 auto}
-.menu a{color:#C9DBF5;font-weight:700;padding:8px 12px;border-radius:8px}
+.menu a{color:#C9DBF5;font-weight:500;padding:8px 12px;border-radius:8px}
 .menu a:hover{color:#fff;background:var(--lacivert2)}
-.misafir{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border-radius:999px;background:var(--lacivert2);font-weight:700;font-size:14px}
-.misafir i{width:32px;height:32px;border-radius:50%;background:#3B5778;display:grid;place-items:center;font-style:normal;font-weight:800}
-.kayit-btn{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:10px;background:#2F7BF5;color:#fff;font-weight:800;font-size:14px}
+.misafir{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border-radius:999px;background:var(--lacivert2);font-weight:500;font-size:14px}
+.misafir i{width:32px;height:32px;border-radius:50%;background:#3B5778;display:grid;place-items:center;font-style:normal;font-weight:600}
+.kayit-btn{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:10px;background:#2F7BF5;color:#fff;font-weight:600;font-size:14px}
 .kayit-btn:hover{color:#fff;background:#1D6AE5}
 .alt-cubuk{background:var(--lacivert2);color:#fff}
 .alt-ic{max-width:1200px;margin:0 auto;padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
-.alt-ic h1{margin:0;font-size:20px;font-weight:900}
-.rozet{font-weight:800;font-size:13px;padding:4px 12px;border-radius:999px}
+.alt-ic h1{margin:0;font-size:20px;font-weight:700}
+.rozet{font-weight:600;font-size:13px;padding:4px 12px;border-radius:999px}
 .rozet.tek{background:#2F7BF5}.rozet.sv{background:var(--lacivert)}
 .sure-kutu{margin-left:auto;display:flex;align-items:center;gap:8px}
-#sure{background:var(--lacivert);padding:8px 16px;border-radius:12px;font-size:22px;font-weight:900;font-variant-numeric:tabular-nums;min-width:96px;text-align:center}
+#sure{background:var(--lacivert);padding:8px 16px;border-radius:12px;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;min-width:96px;text-align:center}
 #duraklat-btn{width:44px;height:44px;border:0;border-radius:12px;background:var(--lacivert);color:#fff;display:grid;place-items:center}
 main{max-width:1200px;margin:0 auto;padding:24px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
 .sol{flex:999 1 520px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:14px}
 .sag{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:20px}
 .genislik{width:100%;max-width:560px}
-.durum{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;font-weight:700;color:var(--soluk)}
+.durum{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;font-weight:500;color:var(--soluk)}
 .durum b{color:var(--yazi)}
 .ipucu-balon{background:var(--lacivert);color:#fff;border-radius:16px;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
-.ipucu-balon .no{width:40px;height:34px;flex:none;border-radius:999px;background:#2F7BF5;display:grid;place-items:center;font-weight:800;font-size:13px}
+.ipucu-balon .no{width:40px;height:34px;flex:none;border-radius:999px;background:#2F7BF5;display:grid;place-items:center;font-weight:600;font-size:13px}
 .ipucu-balon p{margin:0}
-.ipucu-balon .baslik{font-size:16px;font-weight:800}
+.ipucu-balon .baslik{font-size:16px;font-weight:600}
 .ipucu-balon .metin{font-size:14px;color:#C9DBF5;margin-top:2px}
 .ipucu-balon .butonlar{display:flex;gap:8px}
-.ipucu-balon button{min-height:40px;padding:0 14px;border-radius:10px;font-weight:700;font-size:14px}
+.ipucu-balon button{min-height:40px;padding:0 14px;border-radius:10px;font-weight:500;font-size:14px}
 #ipucu-gec{border:1px solid #4E73A6;background:transparent;color:#fff}
-#ipucu-ileri{border:0;background:#fff;color:var(--lacivert);font-weight:800}
+#ipucu-ileri{border:0;background:#fff;color:var(--lacivert);font-weight:600}
 #tahta-alani{position:relative}
 #tahta{width:100%;aspect-ratio:1/1;display:grid;border:3px solid var(--lacivert);border-radius:10px;overflow:hidden;background:#fff;user-select:none}
-.hucre{border:0;border-right:1px solid #C9D6E8;border-bottom:1px solid #C9D6E8;background:#fff;color:var(--mavi);font-weight:700;padding:0;min-width:0;min-height:0;font-size:clamp(18px,5vw,30px);display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.hucre{border:0;border-right:1px solid #C9D6E8;border-bottom:1px solid #C9D6E8;background:#fff;color:var(--mavi);font-weight:500;padding:0;min-width:0;min-height:0;font-size:clamp(18px,5vw,30px);display:grid;place-items:center;font-variant-numeric:tabular-nums}
 #tahta[data-n="6"] .hucre{font-size:clamp(22px,6vw,36px)}
 #tahta[data-n="4"] .hucre{font-size:clamp(26px,8vw,44px)}
 .hucre.son-sutun{border-right:0}
 .hucre.son-satir{border-bottom:0}
 .hucre.kalin-sag{border-right:3px solid var(--lacivert)}
 .hucre.kalin-alt{border-bottom:3px solid var(--lacivert)}
-.hucre.verilen{color:var(--lacivert);font-weight:900}
+.hucre.verilen{color:var(--lacivert);font-weight:700}
 .hucre.bolge{background:#EAF2FF}
 .hucre.ayni{background:#D6E6FF}
 .hucre.yanlis{background:#FDE7E5;color:var(--kirmizi)}
 .hucre.secili{background:#BFD7FF}
-.notlar{display:grid;width:100%;height:100%;padding:2px;font-size:clamp(9px,1.6vw,12px);font-weight:700;color:var(--soluk);line-height:1;align-items:center;justify-items:center}
+.notlar{display:grid;width:100%;height:100%;padding:2px;font-size:clamp(9px,1.6vw,12px);font-weight:500;color:var(--soluk);line-height:1;align-items:center;justify-items:center}
 .duraklatildi #tahta{filter:blur(14px);pointer-events:none}
 #duraklat-perde{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
 #duraklat-perde div{background:#fff;border:1px solid var(--cizgi);border-radius:18px;padding:22px 28px;box-shadow:0 10px 30px rgba(11,37,69,.15)}
-#duraklat-perde p{margin:0 0 12px;font-size:18px;font-weight:800}
-.ana-btn{min-height:52px;padding:0 24px;border:0;border-radius:14px;background:var(--turuncu);color:#2B1400;font-size:17px;font-weight:900;box-shadow:0 4px 0 var(--turuncu-golge)}
+#duraklat-perde p{margin:0 0 12px;font-size:18px;font-weight:600}
+.ana-btn{min-height:52px;padding:0 24px;border:0;border-radius:14px;background:var(--turuncu);color:#2B1400;font-size:17px;font-weight:700;box-shadow:0 4px 0 var(--turuncu-golge)}
 .ana-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--turuncu-golge)}
 #rakamlar{display:grid;gap:6px}
 .rakam{min-height:58px;border:1px solid #C9D6E8;background:#fff;border-radius:12px;color:var(--mavi);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
-.rakam-no{font-size:26px;font-weight:800}
-.rakam-kalan{font-size:11px;color:#5B6B82;font-weight:700;margin-top:3px}
+.rakam-no{font-size:26px;font-weight:600}
+.rakam-kalan{font-size:11px;color:#5B6B82;font-weight:500;margin-top:3px}
 .rakam:disabled{opacity:.35;cursor:default}
 .rakam:not(:disabled):hover{background:var(--acik)}
 .araclar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.araclar button{min-height:52px;border:0;background:#E9F0FA;border-radius:12px;font-weight:700;font-size:14px;color:var(--lacivert)}
+.araclar button{min-height:52px;border:0;background:#E9F0FA;border-radius:12px;font-weight:500;font-size:14px;color:var(--lacivert)}
 .araclar button:hover{background:#DDE8F7}
 #not-btn.acik{border:2px solid var(--mavi);background:var(--acik);color:var(--mavi)}
 .kart{background:#fff;border:1px solid var(--cizgi);border-radius:20px;padding:20px}
-.kart h2{margin:0 0 12px;font-size:18px;font-weight:900;color:var(--lacivert)}
+.kart h2{margin:0 0 12px;font-size:18px;font-weight:700;color:var(--lacivert)}
 dl.ist{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-dl.ist dt{font-size:12px;color:var(--soluk);font-weight:700}
-dl.ist dd{margin:0;font-size:18px;font-weight:900}
-.ayar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;font-size:14px;font-weight:700}
+dl.ist dt{font-size:12px;color:var(--soluk);font-weight:500}
+dl.ist dd{margin:0;font-size:18px;font-weight:700}
+.ayar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;font-size:14px;font-weight:500}
 .ayar input{width:22px;height:22px;accent-color:var(--mavi)}
 #seviye-listesi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.seviye-btn{min-height:44px;border-radius:12px;border:1px solid #C9D6E8;background:#fff;color:var(--lacivert);font-weight:700;font-size:14px}
-.seviye-btn.secili{border:2px solid var(--mavi);background:var(--acik);color:var(--mavi);font-weight:800}
-.reklam{min-height:250px;border:2px dashed #B8C7DB;border-radius:14px;display:grid;place-items:center;color:#5B6B82;font-size:13px;font-weight:700;background:#FAFCFF;text-align:center;padding:12px}
+.seviye-btn{min-height:44px;border-radius:12px;border:1px solid #C9D6E8;background:#fff;color:var(--lacivert);font-weight:500;font-size:14px}
+.seviye-btn.secili{border:2px solid var(--mavi);background:var(--acik);color:var(--mavi);font-weight:600}
+.reklam{min-height:250px;border:2px dashed #B8C7DB;border-radius:14px;display:grid;place-items:center;color:#5B6B82;font-size:13px;font-weight:500;background:#FAFCFF;text-align:center;padding:12px}
 #sonuc{background:var(--lacivert);color:#fff;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:20px}
-#sonuc h2{margin:0;font-size:36px;font-weight:900;line-height:1.1}
+#sonuc h2{margin:0;font-size:36px;font-weight:700;line-height:1.1}
 .sonuc-ust{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.sonuc-ust span{background:var(--mavi);padding:4px 12px;border-radius:999px;font-size:13px;font-weight:800}
+.sonuc-ust span{background:var(--mavi);padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600}
 #s-rekor{background:var(--turuncu)!important;color:#2B1400}
 .sonuc-kutular{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .sonuc-kutular div{background:var(--lacivert2);border-radius:16px;padding:16px}
-.sonuc-kutular small{display:block;font-size:13px;color:#9CC1F5;font-weight:800}
-.sonuc-kutular strong{display:block;font-size:30px;font-weight:900;font-variant-numeric:tabular-nums}
+.sonuc-kutular small{display:block;font-size:13px;color:#9CC1F5;font-weight:600}
+.sonuc-kutular strong{display:block;font-size:30px;font-weight:700;font-variant-numeric:tabular-nums}
 .sonuc-kutular em{display:block;font-style:normal;font-size:12px;color:#C9DBF5}
 .misafir-not{background:#fff;color:var(--lacivert);border-radius:16px;padding:14px 16px;font-size:15px;line-height:1.5}
 .uyari{background:#FDE7E5;color:#7A1A12;border-radius:12px;padding:10px 14px;font-size:14px}
@@ -111,7 +111,7 @@ dl.ist dd{margin:0;font-size:18px;font-weight:900}
 <body>
 <header class="ust">
 <div class="ust-ic">
-<a class="logo" href="#" aria-label="MaviSudoku ana sayfa"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="8" fill="#2F7BF5"/><path d="M12 1v32M22 1v32M1 12h32M1 22h32" stroke="#0B2545" stroke-width="1.5"/><text x="17" y="22" text-anchor="middle" font-size="13" font-weight="900" fill="#fff" font-family="Nunito">9</text></svg>Mavi<span>Sudoku</span></a>
+<a class="logo" href="#" aria-label="MaviSudoku ana sayfa"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="8" fill="#2F7BF5"/><path d="M12 1v32M22 1v32M1 12h32M1 22h32" stroke="#0B2545" stroke-width="1.5"/><text x="17" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="Inter">9</text></svg>Mavi<span>Sudoku</span></a>
 <nav class="menu" aria-label="Ana menü"><a href="#">Günlük Sudoku</a><a href="#seviye-baslik">Seviyeler</a><a href="#">Sıralama</a><a href="#">Taktikler</a><a href="#">Yazdırılabilir</a></nav>
 <div style="display:flex;align-items:center;gap:10px"><span class="misafir"><i>?</i><span id="misafir-adi">misafir</span></span><a class="kayit-btn" href="#">Ücretsiz kayıt ol</a></div>
 </div>
