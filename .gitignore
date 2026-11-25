@@ -18,3 +18,4 @@ uygulamalar/mobil/dist/
 *.p12
 *.keystore
 *.mobileprovision
+*.whl
