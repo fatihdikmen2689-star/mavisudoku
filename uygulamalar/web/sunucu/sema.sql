@@ -108,3 +108,14 @@ CREATE TABLE IF NOT EXISTS mac_ilerleme (
   guncelleme    TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (mac_id, kullanici_id)
 );
+
+-- Şifre sıfırlama: e-postayla gönderilen tek kullanımlık jeton (yalnızca özeti saklanır), 1 saat geçerli
+CREATE TABLE IF NOT EXISTS sifre_sifirlama (
+  token_ozet    TEXT PRIMARY KEY,
+  kullanici_id  INTEGER NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  ip_ozet       TEXT NOT NULL,
+  bitis         TIMESTAMPTZ NOT NULL,
+  kullanildi    BOOLEAN NOT NULL DEFAULT FALSE,
+  olusturma     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS sifre_sifirlama_kullanici ON sifre_sifirlama (kullanici_id, olusturma);

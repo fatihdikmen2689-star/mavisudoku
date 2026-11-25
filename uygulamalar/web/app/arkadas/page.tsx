@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Reklam } from '../../bilesenler/Reklam.tsx';
 import type { Metadata } from 'next';
 import { UstMenu } from '../../bilesenler/UstMenu.tsx';
 import { ArkadasPaneli } from '../../bilesenler/ArkadasPaneli.tsx';
@@ -46,7 +47,7 @@ export default async function Arkadas({ searchParams }: { searchParams: Promise<
               <li>Süren, bulmacanın genel sıralamasına da girer.</li>
             </ol>
           </section>
-          <div className="reklam uzun" role="complementary" aria-label="Reklam alanı">Reklam alanı</div>
+          <Reklam yer="yan" uzun />
         </aside>
       </main>
     </>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Reklam } from '../../bilesenler/Reklam.tsx';
 import type { Metadata } from 'next';
 import { UstMenu } from '../../bilesenler/UstMenu.tsx';
 import { mevcutOyuncu } from '../../sunucu/istek.ts';
@@ -33,7 +34,7 @@ export default async function Taktikler() {
             </Link>
           ))}
         </div>
-        <div className="reklam" role="complementary" aria-label="Reklam alanı">Reklam alanı</div>
+        <Reklam yer="icerik" />
       </main>
     </>
   );

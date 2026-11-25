@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Reklam } from '../../../bilesenler/Reklam.tsx';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { UstMenu } from '../../../bilesenler/UstMenu.tsx';
@@ -91,7 +92,7 @@ export default async function BulmacaSayfasi({ params }: { params: Promise<{ id:
             <p style={{ margin: '10px 0 0', fontSize: 12, color: 'var(--soluk)' }}>Oyuncular sıralamada ad soyadıyla ya da rumuzuyla görünmeyi kendileri seçer. Yaş yalnızca izin verilirse görünür. Üye olmayanlar misafir adıyla sıralamaya girer.</p>
           </section>
 
-          <div className="reklam" role="complementary" aria-label="Reklam alanı">Reklam alanı</div>
+          <Reklam yer="icerik" />
 
           <section className="kart" aria-labelledby="yorum-b" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             <h2 id="yorum-b" style={{ margin: 0 }}>Yorumlar <span style={{ fontSize: 15, color: 'var(--soluk)' }}>· {b.yorumSayisi}</span></h2>
@@ -122,7 +123,7 @@ export default async function BulmacaSayfasi({ params }: { params: Promise<{ id:
             <p className="kart-alt">Her seferinde daha önce açmadığın bir bulmaca gelir.</p>
             <Link className="ikincil-btn" href={`/oyna/${b.seviye}`} style={{ width: '100%' }}>Yeni {ui.ad} bulmaca</Link>
           </section>
-          <div className="reklam uzun" role="complementary" aria-label="Reklam alanı">Reklam alanı</div>
+          <Reklam yer="yan" uzun />
         </aside>
       </main>
     </>

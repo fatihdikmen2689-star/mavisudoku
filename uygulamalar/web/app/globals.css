@@ -18,13 +18,14 @@ button { cursor: pointer; }
 
 /* Üst menü */
 .ust { background: var(--lacivert); color: #fff; }
-.ust-ic { max-width: 1200px; margin: 0 auto; padding: 12px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; }
+.ust-ic { max-width: 1240px; margin: 0 auto; padding: 12px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; }
 .logo { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 22px; font-weight: 900; letter-spacing: -.3px; }
 .logo:hover { color: #fff; }
 .logo span { color: #7FB2FF; }
 .logo b { letter-spacing: -.3px; }
 .menu { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; }
-.menu a { color: #C9DBF5; font-weight: 700; padding: 8px 12px; border-radius: 8px; }
+.menu a { color: #C9DBF5; font-weight: 700; padding: 8px 10px; border-radius: 8px; white-space: nowrap; }
+@media (min-width: 601px) and (max-width: 1280px) { .menu a { padding: 8px 7px; font-size: 15px; } .ust-ic { gap: 10px 14px; } }
 .menu a:hover, .menu a[aria-current="page"] { color: #fff; background: var(--lacivert2); }
 .ust-sag { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .cip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border-radius: 999px; background: var(--lacivert2); color: #fff; font-weight: 700; font-size: 14px; }
@@ -169,7 +170,7 @@ textarea.yorum-giris { width: 100%; min-height: 90px; border: 1px solid var(--ci
 /* Formlar */
 .form { display: flex; flex-direction: column; gap: 16px; }
 .alan label, .alan .lbl { display: block; font-size: 14px; font-weight: 800; margin-bottom: 6px; }
-.alan input[type="text"], .alan input[type="email"], .alan input[type="password"], .alan select { width: 100%; min-height: 48px; border: 1px solid var(--cizgi2); border-radius: 12px; padding: 0 14px; font-size: 16px; background: #fff; }
+.alan input:not([type]), .alan input[type="text"], .alan input[type="email"], .alan input[type="password"], .alan select { width: 100%; min-height: 48px; border: 1px solid var(--cizgi2); border-radius: 12px; padding: 0 14px; font-size: 16px; background: #fff; }
 .alan .ipucu { margin: 6px 0 0; font-size: 13px; color: var(--soluk); }
 .alan .hata { margin: 6px 0 0; font-size: 13px; font-weight: 700; color: var(--kirmizi); }
 .alan .iyi { margin: 6px 0 0; font-size: 13px; font-weight: 700; color: var(--yesil); }
@@ -179,7 +180,7 @@ textarea.yorum-giris { width: 100%; min-height: 90px; border: 1px solid var(--ci
 .ikili { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 fieldset.kutu { border: 1px solid #E4EBF5; border-radius: 14px; padding: 14px 16px; margin: 0; }
 fieldset.kutu legend { font-size: 14px; font-weight: 800; padding: 0 6px; }
-.sekmeler { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 6px; border-radius: 14px; background: var(--zemin); margin-bottom: 22px; }
+.sekmeler { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; padding: 6px; border-radius: 14px; background: var(--zemin); margin-bottom: 22px; }
 .sekmeler a { min-height: 46px; display: grid; place-items: center; border-radius: 10px; font-weight: 900; color: var(--soluk); }
 .sekmeler a[aria-current="page"] { background: #fff; color: var(--lacivert); box-shadow: 0 1px 3px rgba(11, 37, 69, .15); }
 .tam-btn { width: 100%; min-height: 54px; border: 0; border-radius: 14px; background: var(--mavi); color: #fff; font-size: 17px; font-weight: 900; }
@@ -251,3 +252,10 @@ fieldset.kutu legend { font-size: 14px; font-weight: 800; padding: 0 6px; }
 .rakip-cubuk.rakip span { background: var(--turuncu); }
 .geri-sayim { display: block; font-size: 72px; font-weight: 900; line-height: 1; color: var(--mavi); font-variant-numeric: tabular-nums; }
 @media (max-width: 600px) { .davet-bildirim { left: 12px; right: 12px; top: auto; bottom: 12px; max-width: none; } }
+
+/* Gerçek reklam kutusu: yer ayrılır, "Reklam" etiketi görünür */
+.reklam-kutu { position: relative; min-height: 120px; padding-top: 18px; }
+.reklam-kutu.uzun { min-height: 280px; }
+.reklam-etiket { position: absolute; top: 0; left: 0; font-size: 11px; font-weight: 700; letter-spacing: .5px; color: #7A889C; text-transform: uppercase; }
+.metin-btn { border: 0; background: none; padding: 0; font: inherit; color: var(--mavi); font-weight: 700; cursor: pointer; }
+.metin-btn:hover { text-decoration: underline; }

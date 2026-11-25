@@ -202,6 +202,19 @@ export interface SiralamaSatiri {
 }
 
 /** Bir bulmacanın sıralaması. 18 yaş altı üyelerin yalnızca rumuzu görünür, yaşı gösterilmez. */
+export interface AdSatiri {
+  kullanici_id: number | null; rumuz: string | null; ad: string | null; soyad: string | null;
+  dogum_yili: number | null; gorunen: string | null; yas_goster: boolean | null; misafir_ad: string | null;
+}
+
+/** Sıralamada görünen ad ve yaş: kullanıcının seçimi; 18 yaş altında yalnızca rumuz, yaş gizli */
+export function siralamaAdi(s: AdSatiri): { ad: string; yas: number | null } {
+  const yas = s.dogum_yili ? buYil() - s.dogum_yili : null;
+  const yetiskin = yas !== null && yas >= 18;
+  if (!s.kullanici_id) return { ad: s.misafir_ad ?? 'misafir', yas: null };
+  return { ad: yetiskin && s.gorunen === 'adsoyad' ? `${s.ad} ${s.soyad}` : s.rumuz!, yas: yetiskin && s.yas_goster ? yas : null };
+}
+
 export async function bulmacaSiralamasi(db: Veritabani, bulmacaId: number, ben: Oyuncu | null, limit = 50): Promise<SiralamaSatiri[]> {
   const r = await db.sorgu<{
     kullanici_id: number | null; misafir_id: number | null; sure: number; hata: number; puan: number;
@@ -210,15 +223,10 @@ export async function bulmacaSiralamasi(db: Veritabani, bulmacaId: number, ben: 
     `SELECT o.kullanici_id, o.misafir_id, o.sure, o.hata, o.puan, k.rumuz, k.ad, k.soyad, k.dogum_yili, k.gorunen, k.yas_goster, m.ad AS misafir_ad
      FROM oyunlar o LEFT JOIN kullanicilar k ON k.id = o.kullanici_id LEFT JOIN misafirler m ON m.id = o.misafir_id
      WHERE o.bulmaca_id = $1 AND o.siralamada ORDER BY o.puan DESC, o.sure ASC, o.id ASC LIMIT $2`, [bulmacaId, limit]);
-  const yil = buYil();
   return r.map((s, i) => {
-    const yas = s.dogum_yili ? yil - s.dogum_yili : null;
-    const yetiskin = yas !== null && yas >= 18;
-    const ad = s.kullanici_id
-      ? (yetiskin && s.gorunen === 'adsoyad' ? `${s.ad} ${s.soyad}` : s.rumuz!)
-      : s.misafir_ad!;
+    const { ad, yas } = siralamaAdi(s);
     return {
-      sira: i + 1, ad, misafir: !s.kullanici_id, yas: yetiskin && s.yas_goster ? yas : null,
+      sira: i + 1, ad, misafir: !s.kullanici_id, yas,
       sure: s.sure, hata: s.hata, puan: s.puan,
       benim: !!ben && (ben.tip === 'uye' ? s.kullanici_id === ben.id : s.misafir_id === ben.id),
     };

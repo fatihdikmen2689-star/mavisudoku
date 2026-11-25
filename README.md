@@ -3,7 +3,7 @@
 Türkçe, ücretsiz, reklamla desteklenen sudoku sitesi ve mobil uygulaması.
 Kararların tamamı **MaviSudoku – Proje Özeti** dokümanında, ekran tasarımları **MaviSudoku – Web ve Mobil Tasarım** tuvalindedir.
 
-## Durum: 4. adım tamamlandı
+## Durum: 5. adım tamamlandı
 
 | Parça | Durum |
 |---|---|
@@ -14,12 +14,16 @@ Kararların tamamı **MaviSudoku – Proje Özeti** dokümanında, ekran tasarı
 | Üyelik | ✅ E-posta, ad soyad, rumuz, doğum yılı; sıralamada ad soyad veya rumuz, isteğe bağlı yaş; 18 yaş altı yalnızca rumuzla görünür |
 | Her bulmaca bir kişiye bir kez | ✅ Veritabanı kısıtıyla garanti; önce başkalarının oynadığı bulmacalar verilir |
 | Yorumlar ve küfür filtresi | ✅ Yalnızca bulmacayı bitiren üyeler yazar; ağır küfür reddedilir, şüpheli olan onaya düşer |
-| Sunucu testleri | ✅ 25 test geçiyor (maç dahil); iki tarayıcıyla gerçek maç denendi; tarayıcıda uçtan uca akış denendi (misafir oyna → sonuç → sıralama → kayıt + aktarım → yorum → çıkış/giriş, mobil) |
+| Sunucu testleri | ✅ 31 test geçiyor (maç, hesap, şifre sıfırlama, genel sıralama dahil); iki tarayıcıyla gerçek maç denendi; tarayıcıda uçtan uca akış denendi (misafir oyna → sonuç → sıralama → kayıt + aktarım → yorum → çıkış/giriş, mobil) |
 | Taktik yazıları (`/taktikler`) | ✅ 6 yazı: başlangıç, tek aday, gizli tekli, işaretleme, çıplak çift, X-Wing. Örnek ızgaraların mantığı testle doğrulanır (`test/sekiller.test.ts`) |
 | Sudoku kuralları sayfası | ✅ |
 | Çocuklar için yazdırılabilir PDF (`/yazdirilabilir`) | ✅ 4×4 / 6×6, 1–10 sayfa, kolaydan zora, yıldızlı zorluk, cevap anahtarı. Yazı tipi Türkçe karakterli Nunito (OFL lisanslı, `sunucu/yazitipi`). Çocuklara yönelik olduğu için bu sayfada reklam yok |
 | SEO | ✅ `sitemap.xml` (sabit sayfalar, seviyeler, taktikler, en çok çözülen 1000 bulmaca), `robots.txt`, sayfa başlık/açıklamaları |
-| Genel sıralama, profil, yasal metinler | ⏳ "Yakında" sayfası; 5. adımda (yasal metinler avukat kontrolüyle) |
+| Profil ve ayarlar (`/profil`) | ✅ İstatistikler (seviye seviye en iyi ve ortalama süre, toplam puan, seri, maç galibiyetleri), son çözülenler, ad soyad ve sıralamada görünüm ayarı, şifre değiştirme (diğer oturumlar kapanır), KVKK: verilerimi indir ve hesabı kalıcı silme |
+| Genel sıralama (`/siralama`) | ✅ Bugün, bu hafta, tüm zamanlar (Türkiye saatiyle); ilk 100 ve listede değilsen kendi sıran |
+| Şifre sıfırlama (`/sifremi-unuttum`) | ✅ Tek kullanımlık, 1 saat geçerli bağlantı; hesap var mı yok mu belli edilmez; hesap başına saatte 3, IP başına saatte 10 istek. E-posta servisi `SMTP_URL` ile bağlanır (Brevo, Resend, Amazon SES, Gmail Workspace… hepsi olur) |
+| Reklamlar ve çerez onayı | ✅ AdSense kodları `.env` ile girilir. Çerez tercihi yapılana kadar reklam istenmez; "Yalnızca gerekli" seçilirse kişiselleştirilmemiş reklam. Google onay modu sinyalleri, `ads.txt`, alt bilgide "Çerez tercihlerim". Yazdırılabilir (çocuk) sayfasında reklam yok |
+| Yasal metinler | ⏳ "Yakında" sayfası; yayından önce avukat kontrolüyle |
 | Arkadaşınla oyna (`/arkadas`, `/mac/[id]`) | ✅ Yalnızca üyeler; rumuzla davet (10 dk geçerli), 5 sn geri sayım, ikisinin de açmadığı aynı bulmaca, rakibin ilerlemesi canlı, ilk doğru çözen kazanır. Menüde davet rozeti ve her sayfada davet bildirimi. Maçta ipucu ve duraklatma yok; süreler bulmacanın sıralamasına girer. Kötüye kullanıma karşı: saatte 20 davet, aynı kişi günde 3 kez reddederse yeni davet yok |
 | Mobil uygulama | ⏳ 6. adım |
 
@@ -40,6 +44,11 @@ Veritabanı ayarı ortam değişkenleriyle yapılır (şifreler `.env` dosyasın
 | `PGLITE_DIR` | `DATABASE_URL` yoksa gömülü PostgreSQL (PGlite) dosyalarının klasörü; varsayılan `veri/pglite` |
 | `MS_DB=bellek` | Testler için bellekte geçici veritabanı |
 | `SITE_URL` | Sitenin adresi (varsayılan `https://mavisudoku.com`) |
+| `SMTP_URL`, `EPOSTA_GONDEREN` | E-posta servisi (şifre sıfırlama). Boşsa e-posta gönderilmez, uyarı kaydedilir |
+| `EPOSTA_KAYDI=konsol` | Yalnızca deneme sunucusu için: e-posta içeriğini sunucu kaydına yazar |
+| `NEXT_PUBLIC_ADSENSE_ISTEMCI`, `NEXT_PUBLIC_ADSENSE_SLOT_ICERIK`, `NEXT_PUBLIC_ADSENSE_SLOT_YAN` | AdSense yayıncı kimliği ve reklam birimleri (derleme sırasında okunur) |
+
+Örnek ayar dosyası: `uygulamalar/web/.env.example`.
 
 Tablolar ilk çalıştırmada kendiliğinden kurulur ve havuz yüklenir. Şema: `uygulamalar/web/sunucu/sema.sql`.
 

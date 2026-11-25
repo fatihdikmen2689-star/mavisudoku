@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Reklam } from '../../../bilesenler/Reklam.tsx';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { UstMenu } from '../../../bilesenler/UstMenu.tsx';
@@ -40,7 +41,7 @@ export default async function TaktikSayfasi({ params }: { params: Promise<{ slug
                 : <ul>{b.liste.map((l) => <li key={l}>{l}</li>)}</ul>)}
               {b.sekil && <TaktikIzgara sekil={SEKILLER[b.sekil]} />}
               {b.not && <p className="not-kutu">{b.not}</p>}
-              {i === 1 && <div className="reklam" role="complementary" aria-label="Reklam alanı" style={{ margin: '24px 0' }}>Reklam alanı</div>}
+              {i === 1 && <Reklam yer="icerik" style={{ margin: '24px 0' }} />}
             </section>
           ))}
           <div className="kart" style={{ marginTop: 28, display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center', justifyContent: 'space-between' }}>
@@ -59,7 +60,7 @@ export default async function TaktikSayfasi({ params }: { params: Promise<{ slug
               {TAKTIKLER.map((x) => <li key={x.slug}>{x.slug === t.slug ? <strong>{x.kisaAd}</strong> : <Link href={`/taktikler/${x.slug}`}>{x.kisaAd}</Link>}</li>)}
             </ol>
           </section>
-          <div className="reklam uzun" role="complementary" aria-label="Reklam alanı">Reklam alanı</div>
+          <Reklam yer="yan" uzun />
         </aside>
       </main>
     </>

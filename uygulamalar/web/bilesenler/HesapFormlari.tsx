@@ -128,7 +128,7 @@ export function GirisFormu({ misafirAdi }: { misafirAdi: string | null }) {
       {hata && <p className="uyari" role="alert" style={{ margin: 0 }}>{hata}</p>}
       <button type="submit" className="tam-btn" disabled={bekle}>{bekle ? 'Giriş yapılıyor…' : 'Giriş yap'}</button>
       {misafirAdi && <p style={{ margin: 0, fontSize: 13, color: 'var(--soluk)', textAlign: 'center' }}>Giriş yapınca <strong>{misafirAdi}</strong> olarak çözdüklerin hesabına eklenir.</p>}
-      <p style={{ margin: 0, fontSize: 13, color: 'var(--soluk)', textAlign: 'center' }}>Şifreni mi unuttun? Şifre sıfırlama e-postası yayına alırken eklenecek; şimdilik destek ekibine yaz.</p>
+      <p style={{ margin: 0, fontSize: 14, textAlign: 'center' }}><Link href="/sifremi-unuttum" style={{ fontWeight: 800 }}>Şifremi unuttum</Link></p>
     </form>
   );
 }

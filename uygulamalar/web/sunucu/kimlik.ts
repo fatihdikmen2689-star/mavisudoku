@@ -84,7 +84,7 @@ export interface KayitGirdisi {
   pazarlama: boolean;
 }
 
-const AD_DESENI = /^[\p{L}][\p{L}\s.'-]{0,39}$/u;
+export const AD_DESENI = /^[\p{L}][\p{L}\s.'-]{0,39}$/u;
 export const RUMUZ_DESENI = /^[a-z0-9_.]{3,20}$/;
 
 export function buYil(): number {

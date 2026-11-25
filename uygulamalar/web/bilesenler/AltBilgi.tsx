@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CerezTercihButonu } from './CerezTercihButonu.tsx';
 
 export function AltBilgi() {
   return (
@@ -12,6 +13,7 @@ export function AltBilgi() {
           <Link href="/gizlilik">Gizlilik politikası</Link>
           <Link href="/cerezler">Çerez politikası</Link>
           <Link href="/kullanim-kosullari">Kullanım koşulları</Link>
+          <CerezTercihButonu />
         </nav>
       </div>
     </footer>

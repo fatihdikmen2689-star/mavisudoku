@@ -3,6 +3,7 @@ import '@fontsource-variable/nunito';
 import './globals.css';
 import { AltBilgi } from '../bilesenler/AltBilgi.tsx';
 import { CerezBandi } from '../bilesenler/CerezBandi.tsx';
+import { ADSENSE_ISTEMCI, ONAY_BETIGI } from '../lib/reklam.ts';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.SITE_URL ?? 'https://mavisudoku.com'),
@@ -16,6 +17,12 @@ export const viewport: Viewport = { themeColor: '#0B2545', width: 'device-width'
 export default function KokDuzen({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
+      {ADSENSE_ISTEMCI && (
+        <head>
+          <script dangerouslySetInnerHTML={{ __html: ONAY_BETIGI }} />
+          <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ISTEMCI}`} crossOrigin="anonymous" />
+        </head>
+      )}
       <body>
         {children}
         <AltBilgi />

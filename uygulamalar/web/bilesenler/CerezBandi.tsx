@@ -1,19 +1,24 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { reklamOnayiniUygula } from '../lib/reklam.ts';
 
 /**
  * Çerez onay bandı. Seçim tarayıcıda saklanır ve "ms_cerez" çerezine de yazılır
- * (yayında reklam ve ölçüm betikleri bu değere göre yüklenecek: KVKK ve Google onay modu).
+ * (reklamlar bu değere göre istenir: seçim yapılana kadar hiç, "gerekli"de kişiselleştirilmemiş; bkz. lib/reklam.ts).
  * "Yalnızca gerekli" ile "Tümünü kabul et" eşit görünürlükte.
  */
 export function CerezBandi() {
   const [goster, setGoster] = useState(false);
   useEffect(() => {
     setGoster(!document.cookie.split('; ').some((c) => c.startsWith('ms_cerez=')));
+    const ac = () => setGoster(true);
+    window.addEventListener('ms-cerez-tercih', ac);
+    return () => window.removeEventListener('ms-cerez-tercih', ac);
   }, []);
   const sec = (deger: 'gerekli' | 'tumu') => {
     document.cookie = `ms_cerez=${deger}; path=/; max-age=${180 * 86400}; samesite=lax`;
+    reklamOnayiniUygula(deger);
     setGoster(false);
   };
   if (!goster) return null;

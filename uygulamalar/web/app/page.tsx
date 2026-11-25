@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Reklam } from '../bilesenler/Reklam.tsx';
 import { SEVIYE_SIRASI } from '@mavisudoku/motor';
 import { UstMenu } from '../bilesenler/UstMenu.tsx';
 import { MiniIzgara } from '../bilesenler/MiniIzgara.tsx';
@@ -78,7 +79,7 @@ export default async function AnaSayfa() {
           </div>
         </section>
 
-        <div className="reklam" role="complementary" aria-label="Reklam alanı">Reklam alanı</div>
+        <Reklam yer="icerik" />
 
         <section style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
           <div className="kart" style={{ flex: '1 1 380px' }}>

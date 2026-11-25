@@ -8,7 +8,7 @@ import { bekleyenDavetSayisi } from '../sunucu/mac.ts';
 export type MenuAktif = 'gunluk' | 'seviyeler' | 'arkadas' | 'siralama' | 'taktikler' | 'yazdirilabilir' | null;
 
 const MENU: { id: Exclude<MenuAktif, null>; ad: string; href: string }[] = [
-  { id: 'gunluk', ad: 'Günlük Sudoku', href: '/gunluk' },
+  { id: 'gunluk', ad: 'Günlük', href: '/gunluk' },
   { id: 'seviyeler', ad: 'Seviyeler', href: '/#seviyeler' },
   { id: 'arkadas', ad: 'Arkadaşla Oyna', href: '/arkadas' },
   { id: 'siralama', ad: 'Sıralama', href: '/siralama' },

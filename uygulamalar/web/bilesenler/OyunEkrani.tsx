@@ -4,6 +4,7 @@
  * tarayıcıda oyun numarasına göre saklanır, bitince çözüm sunucuya gönderilip doğrulanır.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Reklam } from './Reklam.tsx';
 import Link from 'next/link';
 import { duzen, metindenIzgara, SEVIYELER } from '@mavisudoku/motor';
 import type { SeviyeId } from '@mavisudoku/motor';
@@ -381,7 +382,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye, mac }: { seviye: Sevi
             <label className="ayar">Süreyi gizle<input type="checkbox" checked={ayar.sureGizle} onChange={(e) => setAyar({ ...ayar, sureGizle: e.target.checked })} /></label>
             <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--soluk)' }}>Klavye: rakamlar, ok tuşları, Sil, N (not), Z (geri al){mac ? '' : ', P (duraklat)'}</p>
           </section>
-          <div className="reklam uzun" role="complementary" aria-label="Reklam alanı">Reklam alanı</div>
+          <Reklam yer="yan" uzun />
         </aside>
       </main>
     </>
