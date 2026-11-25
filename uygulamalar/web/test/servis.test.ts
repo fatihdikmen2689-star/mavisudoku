@@ -200,3 +200,11 @@ test('günün sudokusu: her gün bir Zor bulmaca, aynı gün aynı', async () =>
   const [{ seviye }] = await db.sorgu<{ seviye: string }>(`SELECT seviye FROM bulmacalar WHERE id = $1`, [a]);
   assert.equal(seviye, 'zor');
 });
+
+test('ipucu sınırı: bir bulmacada en fazla 3 ipucu sayılır', async () => {
+  const { oyuncu: o } = await misafirOlustur(db, '10.77.77.77');
+  const v = await oyunVer(db, o, 'kolay');
+  await db.sorgu(`UPDATE oyunlar SET baslangic = now() - interval '20 minutes' WHERE id = $1`, [v.oyunId]);
+  const s = await oyunBitir(db, o, v.oyunId, { cevap: cozumKaristir(v.cozumK, v.oyunId), sure: 600, hata: 0, ipucu: 9 });
+  assert.equal(s.ipucu, 3);
+});

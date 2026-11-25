@@ -7,7 +7,7 @@ export { zorlukAnalizi, TEKNIK_ADI, TEKNIK_DERECESI } from './zorluk.ts';
 export type { Teknik, ZorlukSonucu } from './zorluk.ts';
 export { hamBulmacaUret, bulmacaUret, seviyeBelirle } from './uretici.ts';
 export type { Bulmaca, UretimAyari } from './uretici.ts';
-export { SEVIYELER, SEVIYE_SIRASI, puanHesapla } from './seviyeler.ts';
+export { SEVIYELER, SEVIYE_SIRASI, EN_FAZLA_IPUCU, puanHesapla } from './seviyeler.ts';
 export type { SeviyeId, Seviye, PuanGirdisi, PuanSonucu } from './seviyeler.ts';
 export { cozumuDogrula } from './dogrulama.ts';
 export type { DogrulamaSonucu, DogrulamaHatasi } from './dogrulama.ts';

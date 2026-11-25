@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Reklam } from './Reklam.tsx';
 import Link from 'next/link';
-import { duzen, metindenIzgara, SEVIYELER } from '@mavisudoku/motor';
+import { duzen, metindenIzgara, SEVIYELER, EN_FAZLA_IPUCU } from '@mavisudoku/motor';
 import type { SeviyeId } from '@mavisudoku/motor';
 import { sureMetni, sayi, SEVIYE_UI } from '../lib/bicim.ts';
 import type { VerilenOyun, BittiSonucu } from '../sunucu/oyun.ts';
@@ -195,7 +195,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye, mac }: { seviye: Sevi
     });
   };
   const ipucuVer = () => {
-    if (!oyun || bitti || duraklat || mac || !ilerleme) return;
+    if (!oyun || bitti || duraklat || mac || !ilerleme || ilerleme.ipucu >= EN_FAZLA_IPUCU) return;
     let i = secili;
     if (i < 0 || bulmaca[i] || ilerleme.girilen[i] === cozum[i]) i = cozum.findIndex((v, k) => !bulmaca[k] && ilerleme.girilen[k] !== v);
     if (i < 0) return;
@@ -279,7 +279,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye, mac }: { seviye: Sevi
             <div className="genislik" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div className="durum">
                 <span>Hata: <b style={{ color: 'var(--kirmizi)' }}>{p.hata}</b></span>
-                <span>İpucu: <b>{p.ipucu}</b></span>
+                <span>İpucu: <b>{p.ipucu}/{EN_FAZLA_IPUCU}</b></span>
                 <span>Kalan hücre: <b style={{ color: 'var(--mavi)' }}>{kalan}</b></span>
               </div>
               {mac && macB.durum?.rakip.bitti && (
@@ -348,7 +348,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye, mac }: { seviye: Sevi
                 <button type="button" onClick={geriAl}>Geri al</button>
                 <button type="button" onClick={temizle}>Sil</button>
                 <button type="button" className={notModu ? 'acik' : ''} aria-pressed={notModu} onClick={() => setNotModu((x) => !x)}>{notModu ? 'Not: Açık' : 'Not: Kapalı'}</button>
-                {!mac && <button type="button" onClick={ipucuVer}>İpucu</button>}
+                {!mac && <button type="button" onClick={ipucuVer} disabled={(p?.ipucu ?? 0) >= EN_FAZLA_IPUCU} aria-label={`İpucu, ${EN_FAZLA_IPUCU - (p?.ipucu ?? 0)} hakkın kaldı`}>İpucu ({EN_FAZLA_IPUCU - (p?.ipucu ?? 0)})</button>}
               </div>
               {gonderiliyor && <p className="bilgi" role="status">Çözümün kontrol ediliyor…</p>}
             </div>

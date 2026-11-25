@@ -31,6 +31,9 @@ export const SEVIYELER: Record<SeviyeId, Seviye> = {
   ekstrem: { id: 'ekstrem', ad: 'Ekstrem', boyut: 9, taban: 1500, hedefSaniye: 2400, enAzSaniye: 240 },
 };
 
+/** Bir bulmacada alınabilecek en fazla ipucu (web, mobil ve sunucu aynı sınırı kullanır) */
+export const EN_FAZLA_IPUCU = 3;
+
 export const SEVIYE_SIRASI: SeviyeId[] = ['mini4', 'mini6', 'kolay', 'orta', 'zor', 'uzman', 'usta', 'ekstrem'];
 
 export interface PuanGirdisi {

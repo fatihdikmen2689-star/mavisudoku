@@ -4,7 +4,7 @@
  * Next.js'e geçerken bu mantık aynen bir React bileşenine taşınacak.
  */
 
-import { duzen, metindenIzgara, SEVIYELER, SEVIYE_SIRASI, puanHesapla } from '../../paketler/motor/src/index.ts';
+import { duzen, metindenIzgara, SEVIYELER, SEVIYE_SIRASI, puanHesapla, EN_FAZLA_IPUCU } from '../../paketler/motor/src/index.ts';
 import type { SeviyeId, Duzen } from '../../paketler/motor/src/index.ts';
 
 interface HavuzKaydi { id: string; bulmaca: string; cozum: string; ipucu: number }
@@ -142,7 +142,7 @@ function geriAl(): void {
 }
 
 function ipucuVer(): void {
-  if (oyun.bitti || duraklatildi) return;
+  if (oyun.bitti || duraklatildi || oyun.ipucu >= EN_FAZLA_IPUCU) return;
   let i = oyun.secili;
   if (i < 0 || oyun.bulmaca[i] || oyun.girilen[i] === oyun.cozum[i]) {
     i = oyun.cozum.findIndex((v, k) => !oyun.bulmaca[k] && oyun.girilen[k] !== v);
@@ -246,7 +246,10 @@ function ciz(): void {
   $('bulmaca-adi').textContent = `Bulmaca #${oyun.id.split('-')[1].slice(-5)}`;
   $('seviye-rozet').textContent = sv.ad;
   $('hata').textContent = String(oyun.hata);
-  $('ipucu-sayi').textContent = String(oyun.ipucu);
+  $('ipucu-sayi').textContent = `${oyun.ipucu}/${EN_FAZLA_IPUCU}`;
+  const ipb = $('ipucu-btn') as HTMLButtonElement;
+  ipb.textContent = `İpucu (${EN_FAZLA_IPUCU - oyun.ipucu})`;
+  ipb.disabled = oyun.ipucu >= EN_FAZLA_IPUCU;
   $('kalan').textContent = String(kalan);
   $('sure').textContent = ayar.sureGizle ? '––:––' : sureMetni(oyun.gecen);
   const notBtn = $('not-btn');

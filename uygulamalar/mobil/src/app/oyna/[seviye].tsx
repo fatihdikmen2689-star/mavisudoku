@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, Pressable, ScrollView, Share, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { duzen, metindenIzgara, SEVIYE_SIRASI, type SeviyeId } from '@mavisudoku/motor';
+import { duzen, metindenIzgara, SEVIYE_SIRASI, EN_FAZLA_IPUCU, type SeviyeId } from '@mavisudoku/motor';
 import { api, ApiHatasi } from '../../lib/api.ts';
 import { oku, yaz, sil } from '../../lib/depo.ts';
 import { useOturum } from '../../lib/oturum.tsx';
@@ -142,7 +142,7 @@ export default function OyunEkrani() {
     guncelle((x) => { const girilen = x.girilen.slice(), notlar = x.notlar.slice(); girilen[a.i] = a.deger; notlar[a.i] = a.not; return { ...x, girilen, notlar }; });
   };
   const ipucuVer = () => {
-    if (!oyun || bitti || duraklat || !ilerleme) return;
+    if (!oyun || bitti || duraklat || !ilerleme || ilerleme.ipucu >= EN_FAZLA_IPUCU) return;
     let i = secili;
     if (i < 0 || bulmaca[i] || ilerleme.girilen[i] === cozum[i]) i = cozum.findIndex((v, k) => !bulmaca[k] && ilerleme.girilen[k] !== v);
     if (i < 0) return;
@@ -191,7 +191,7 @@ export default function OyunEkrani() {
           <>
             <View style={[s.durum, { width: boyut }]}>
               <Yazi style={s.durumYazi}>Hata <Text style={{ color: R.kirmizi, fontFamily: Y.kalin }}>{x.hata}</Text></Yazi>
-              <Yazi style={s.durumYazi}>İpucu <Text style={{ fontFamily: Y.kalin }}>{x.ipucu}</Text></Yazi>
+              <Yazi style={s.durumYazi}>İpucu <Text style={{ fontFamily: Y.kalin }}>{x.ipucu}/{EN_FAZLA_IPUCU}</Text></Yazi>
               <Yazi style={s.durumYazi}>Kalan <Text style={{ color: R.mavi, fontFamily: Y.kalin }}>{kalan}</Text></Yazi>
             </View>
             <View>
@@ -223,7 +223,7 @@ export default function OyunEkrani() {
               <Arac metin="Geri al" onPress={geriAl} />
               <Arac metin="Sil" onPress={temizle} />
               <Arac metin={notModu ? 'Not: Açık' : 'Not: Kapalı'} acik={notModu} onPress={() => setNotModu((v) => !v)} />
-              <Arac metin="İpucu" onPress={ipucuVer} />
+              <Arac metin={`İpucu (${EN_FAZLA_IPUCU - x.ipucu})`} onPress={ipucuVer} devre={x.ipucu >= EN_FAZLA_IPUCU} />
             </View>
             {gonderiliyor && <Yazi style={{ color: R.soluk }}>Çözümün kontrol ediliyor…</Yazi>}
           </>
@@ -235,10 +235,10 @@ export default function OyunEkrani() {
   );
 }
 
-function Arac({ metin, onPress, acik }: { metin: string; onPress: () => void; acik?: boolean }) {
+function Arac({ metin, onPress, acik, devre }: { metin: string; onPress: () => void; acik?: boolean; devre?: boolean }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityState={{ selected: !!acik }} onPress={onPress}
-      style={({ pressed }) => [s.arac, acik && { backgroundColor: R.maviAcik }, pressed && { opacity: 0.75 }]}>
+    <Pressable accessibilityRole="button" accessibilityState={{ selected: !!acik, disabled: !!devre }} onPress={onPress} disabled={devre}
+      style={({ pressed }) => [s.arac, acik && { backgroundColor: R.maviAcik }, devre && { opacity: 0.4 }, pressed && { opacity: 0.75 }]}>
       <Text style={[s.aracYazi, acik && { color: '#fff' }]}>{metin}</Text>
     </Pressable>
   );

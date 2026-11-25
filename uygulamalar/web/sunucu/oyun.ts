@@ -7,7 +7,7 @@
  *  - Süre sunucuda da ölçülür; tarayıcının bildirdiği süre sunucu süresini aşamaz.
  */
 
-import { SEVIYELER, SEVIYE_SIRASI, puanHesapla, cozumuDogrula, bulmacaUret } from '@mavisudoku/motor';
+import { SEVIYELER, SEVIYE_SIRASI, puanHesapla, cozumuDogrula, bulmacaUret, EN_FAZLA_IPUCU } from '@mavisudoku/motor';
 import type { SeviyeId } from '@mavisudoku/motor';
 import type { Veritabani } from './db.ts';
 import type { Oyuncu } from './kimlik.ts';
@@ -138,7 +138,7 @@ export async function oyunBitir(db: Veritabani, o: Oyuncu, oyunId: number, g: Bi
   const seviye = oyun.seviye as SeviyeId;
   const sure = tamSayi(g.sure, 1, oyun.gecen + 5); // sunucu süresinden uzun olamaz (duraklatmalar düşülmüş olabilir)
   const hata = tamSayi(g.hata, 0, 999);
-  const ipucu = tamSayi(g.ipucu, 0, 81);
+  const ipucu = tamSayi(g.ipucu, 0, EN_FAZLA_IPUCU);
   const p = puanHesapla({ seviye, sureSaniye: sure, hata, ipucu });
 
   const onceki = await db.sorgu<{ en_iyi: number | null }>(

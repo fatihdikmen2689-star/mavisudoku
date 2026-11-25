@@ -79,7 +79,8 @@ main{max-width:1200px;margin:0 auto;padding:24px;display:flex;flex-wrap:wrap;gap
 .rakam:not(:disabled):hover{background:var(--acik)}
 .araclar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .araclar button{min-height:52px;border:0;background:#E9F0FA;border-radius:12px;font-weight:500;font-size:14px;color:var(--lacivert)}
-.araclar button:hover{background:#DDE8F7}
+.araclar button:hover:not(:disabled){background:#DDE8F7}
+.araclar button:disabled{opacity:.45;cursor:not-allowed}
 #not-btn.acik{border:2px solid var(--mavi);background:var(--acik);color:var(--mavi)}
 .kart{background:#fff;border:1px solid var(--cizgi);border-radius:20px;padding:20px}
 .kart h2{margin:0 0 12px;font-size:18px;font-weight:700;color:var(--lacivert)}
