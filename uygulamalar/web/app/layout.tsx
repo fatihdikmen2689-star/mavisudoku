@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import '@fontsource-variable/nunito';
+import '@fontsource-variable/inter';
 import './globals.css';
 import { AltBilgi } from '../bilesenler/AltBilgi.tsx';
 import { CerezBandi } from '../bilesenler/CerezBandi.tsx';
