@@ -27,25 +27,25 @@ export default async function Siralama({ searchParams }: { searchParams: Promise
       <main className="sayfa iki-sutun">
         <div className="ana-sutun">
           <header>
-            <h1 style={{ margin: '6px 0 8px', fontSize: 34, fontWeight: 900, color: 'var(--lacivert)' }}>Genel sıralama</h1>
+            <h1 style={{ margin: '6px 0 8px', fontSize: 34, fontWeight: 700, color: 'var(--lacivert)' }}>Genel sıralama</h1>
             <p style={{ margin: 0, fontSize: 16, color: '#3B4A60' }}>Sıralamaya giren her çözümün puanı toplanır. Zor seviyeler ve hızlı çözümler daha çok puan getirir.</p>
           </header>
           <nav className="sekmeler" aria-label="Dönem" style={{ maxWidth: 480 }}>
             {(Object.keys(SEKME) as Donem[]).map((k) => <Link key={k} href={`/siralama?donem=${k}`} aria-current={k === donem ? 'page' : undefined}>{SEKME[k]}</Link>)}
           </nav>
           <section className="kart" aria-label={`${SEKME[donem]} sıralaması`}>
-            {ust.length === 0 ? <p style={{ margin: 0, color: 'var(--soluk)' }}>Bu dönemde henüz kimse puan almadı. <Link href="/gunluk" style={{ fontWeight: 800 }}>İlk sen ol!</Link></p> : (
+            {ust.length === 0 ? <p style={{ margin: 0, color: 'var(--soluk)' }}>Bu dönemde henüz kimse puan almadı. <Link href="/gunluk" style={{ fontWeight: 600 }}>İlk sen ol!</Link></p> : (
               <div className="tablo-kutu">
                 <table className="tablo">
                   <thead><tr><th scope="col">Sıra</th><th scope="col">Oyuncu</th><th scope="col">Yaş</th><th scope="col">Çözülen</th><th scope="col">Puan</th></tr></thead>
                   <tbody>
                     {[...ust, ...(ben ? [ben] : [])].map((s) => (
                       <tr key={s.sira} className={s.benim ? 'ben' : undefined}>
-                        <td style={{ fontWeight: 900, color: s.sira <= 3 ? '#8A4300' : undefined }}>{s.sira}</td>
-                        <td style={{ fontWeight: 800 }}>{s.ad}{s.misafir && <> <span className="etiket">Misafir</span></>}{s.benim && <> <span className="etiket" style={{ background: 'var(--acik)', color: 'var(--mavi)' }}>Sen</span></>}</td>
+                        <td style={{ fontWeight: 700, color: s.sira <= 3 ? '#8A4300' : undefined }}>{s.sira}</td>
+                        <td style={{ fontWeight: 600 }}>{s.ad}{s.misafir && <> <span className="etiket">Misafir</span></>}{s.benim && <> <span className="etiket" style={{ background: 'var(--acik)', color: 'var(--mavi)' }}>Sen</span></>}</td>
                         <td style={{ color: 'var(--soluk)' }}>{s.yas ?? '—'}</td>
                         <td>{sayi(s.cozulen)}</td>
-                        <td style={{ fontWeight: 900, color: 'var(--mavi)' }}>{sayi(s.puan)}</td>
+                        <td style={{ fontWeight: 700, color: 'var(--mavi)' }}>{sayi(s.puan)}</td>
                       </tr>
                     ))}
                   </tbody>

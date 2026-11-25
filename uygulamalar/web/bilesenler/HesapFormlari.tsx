@@ -98,7 +98,7 @@ export function KayitFormu({ misafirAdi, yil }: { misafirAdi: string | null; yil
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         {misafirAdi && <label className="onay"><input type="checkbox" checked={f.aktar} onChange={degis('aktar')} /><span><strong>{misafirAdi}</strong> olarak çözdüklerimi hesabıma aktar</span></label>}
-        <label className="onay"><input type="checkbox" checked={f.kvkk} onChange={degis('kvkk')} aria-invalid={!!hatalar.kvkk} /><span><Link href="/kullanim-kosullari" style={{ fontWeight: 800 }}>Kullanım koşullarını</Link> kabul ediyorum ve <Link href="/gizlilik" style={{ fontWeight: 800 }}>KVKK aydınlatma metnini</Link> okudum. <span style={{ color: 'var(--kirmizi)' }}>(zorunlu)</span></span></label>
+        <label className="onay"><input type="checkbox" checked={f.kvkk} onChange={degis('kvkk')} aria-invalid={!!hatalar.kvkk} /><span><Link href="/kullanim-kosullari" style={{ fontWeight: 600 }}>Kullanım koşullarını</Link> kabul ediyorum ve <Link href="/gizlilik" style={{ fontWeight: 600 }}>KVKK aydınlatma metnini</Link> okudum. <span style={{ color: 'var(--kirmizi)' }}>(zorunlu)</span></span></label>
         {hatalar.kvkk && <p className="alan" style={{ margin: 0 }}><span className="hata" style={{ display: 'block' }}>{hatalar.kvkk}</span></p>}
         <label className="onay"><input type="checkbox" checked={f.pazarlama} onChange={degis('pazarlama')} /><span>Turnuva ve yenilik e-postaları almak istiyorum. <span style={{ color: 'var(--soluk)' }}>(isteğe bağlı)</span></span></label>
       </div>
@@ -128,7 +128,7 @@ export function GirisFormu({ misafirAdi }: { misafirAdi: string | null }) {
       {hata && <p className="uyari" role="alert" style={{ margin: 0 }}>{hata}</p>}
       <button type="submit" className="tam-btn" disabled={bekle}>{bekle ? 'Giriş yapılıyor…' : 'Giriş yap'}</button>
       {misafirAdi && <p style={{ margin: 0, fontSize: 13, color: 'var(--soluk)', textAlign: 'center' }}>Giriş yapınca <strong>{misafirAdi}</strong> olarak çözdüklerin hesabına eklenir.</p>}
-      <p style={{ margin: 0, fontSize: 14, textAlign: 'center' }}><Link href="/sifremi-unuttum" style={{ fontWeight: 800 }}>Şifremi unuttum</Link></p>
+      <p style={{ margin: 0, fontSize: 14, textAlign: 'center' }}><Link href="/sifremi-unuttum" style={{ fontWeight: 600 }}>Şifremi unuttum</Link></p>
     </form>
   );
 }

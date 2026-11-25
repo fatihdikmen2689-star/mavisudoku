@@ -13,14 +13,14 @@ export function TaktikIzgara({ sekil, etiket }: { sekil: Sekil; etiket?: string 
     if (fon) hucreler.push(<rect key={`f${i}`} x={x} y={y} width={H} height={H} fill={fon} />);
     const v = sekil.rakamlar[i] ?? sekil.cevap?.[i];
     if (v) {
-      hucreler.push(<text key={`r${i}`} x={x + H / 2} y={y + H * 0.7} textAnchor="middle" fontSize={H * 0.58} fontWeight={900} fill={sekil.cevap?.[i] ? '#13804A' : anahtar.has(i) ? '#A04E00' : '#0B2545'}>{v}</text>);
+      hucreler.push(<text key={`r${i}`} x={x + H / 2} y={y + H * 0.7} textAnchor="middle" fontSize={H * 0.58} fontWeight={700} fill={sekil.cevap?.[i] ? '#13804A' : anahtar.has(i) ? '#A04E00' : '#0B2545'}>{v}</text>);
     } else if (sekil.adaylar?.[i]) {
       for (const d of sekil.adaylar[i]) {
         // Tek adaylı hücrede (tek rakam görünümü) aday ortada ve büyük çizilir
         const tek = sekil.adaylar[i].length === 1;
         const cx = tek ? x + H / 2 : x + ((d - 1) % 3) * (H / 3) + H / 6, cy = tek ? y + H / 2 : y + Math.floor((d - 1) / 3) * (H / 3) + H / 6;
         const sil = sekil.silinen?.[i]?.includes(d);
-        hucreler.push(<text key={`a${i}-${d}`} x={cx} y={cy + (tek ? 6 : 4)} textAnchor="middle" fontSize={tek ? 17 : 11.5} fontWeight={800} fill={sil ? '#D6332B' : anahtar.has(i) ? '#A04E00' : '#3B5A85'}>{d}</text>);
+        hucreler.push(<text key={`a${i}-${d}`} x={cx} y={cy + (tek ? 6 : 4)} textAnchor="middle" fontSize={tek ? 17 : 11.5} fontWeight={600} fill={sil ? '#D6332B' : anahtar.has(i) ? '#A04E00' : '#3B5A85'}>{d}</text>);
         if (sil) hucreler.push(<path key={`s${i}-${d}`} d={tek ? `M${cx - 9} ${cy + 9}L${cx + 9} ${cy - 9}` : `M${cx - 6} ${cy + 6}L${cx + 6} ${cy - 6}`} stroke="#D6332B" strokeWidth={2} />);
       }
     }

@@ -25,7 +25,7 @@ export function CerezBandi() {
   return (
     <div className="cerez" role="dialog" aria-labelledby="cerez-baslik">
       <div className="cerez-ic">
-        <p><strong id="cerez-baslik">Çerezleri nasıl kullanalım?</strong>Oyununu kaydetmek için gerekli çerezleri her zaman kullanırız. Reklamları kişiselleştirmek ve siteyi ölçmek için iznini isteriz. <Link href="/cerezler" style={{ color: '#9CC1F5', fontWeight: 800 }}>Çerez politikası</Link></p>
+        <p><strong id="cerez-baslik">Çerezleri nasıl kullanalım?</strong>Oyununu kaydetmek için gerekli çerezleri her zaman kullanırız. Reklamları kişiselleştirmek ve siteyi ölçmek için iznini isteriz. <Link href="/cerezler" style={{ color: '#9CC1F5', fontWeight: 600 }}>Çerez politikası</Link></p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           <button type="button" onClick={() => sec('gerekli')}>Yalnızca gerekli</button>
           <button type="button" onClick={() => sec('tumu')}>Tümünü kabul et</button>

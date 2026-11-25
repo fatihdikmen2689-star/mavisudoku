@@ -22,7 +22,7 @@ export default async function Arkadas({ searchParams }: { searchParams: Promise<
       <main className="sayfa iki-sutun">
         <div className="ana-sutun">
           <header>
-            <h1 style={{ margin: '6px 0 8px', fontSize: 34, fontWeight: 900, color: 'var(--lacivert)' }}>Arkadaşınla oyna</h1>
+            <h1 style={{ margin: '6px 0 8px', fontSize: 34, fontWeight: 700, color: 'var(--lacivert)' }}>Arkadaşınla oyna</h1>
             <p style={{ margin: 0, fontSize: 17, color: '#3B4A60' }}>Aynı bulmaca, aynı an, iki ekran. Kim önce çözecek?</p>
           </header>
           {uye ? <ArkadasPaneli ilk={await macListesi(db, oyuncu)} rakip={typeof rakip === 'string' ? rakip.slice(0, 20) : undefined} /> : (

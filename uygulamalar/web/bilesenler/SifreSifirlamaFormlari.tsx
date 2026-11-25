@@ -10,7 +10,7 @@ export function SifirlamaIstegiFormu() {
   if (gonderildi) return (
     <div className="form">
       <p className="bilgi" role="status" style={{ margin: 0 }}>Bu e-posta adresiyle bir hesap varsa, şifre yenileme bağlantısı birkaç dakika içinde gelecek. Gereksiz (spam) klasörünü de kontrol et. Bağlantı 1 saat geçerli.</p>
-      <Link href="/giris" style={{ fontWeight: 800 }}>Giriş sayfasına dön</Link>
+      <Link href="/giris" style={{ fontWeight: 600 }}>Giriş sayfasına dön</Link>
     </div>
   );
   return (

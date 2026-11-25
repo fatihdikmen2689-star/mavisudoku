@@ -19,7 +19,7 @@ export default async function Taktikler() {
       <UstMenu oyuncu={await mevcutOyuncu()} aktif="taktikler" />
       <main className="sayfa" style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
         <header style={{ maxWidth: 720 }}>
-          <h1 style={{ margin: '6px 0 10px', fontSize: 34, fontWeight: 900, color: 'var(--lacivert)' }}>Sudoku taktikleri</h1>
+          <h1 style={{ margin: '6px 0 10px', fontSize: 34, fontWeight: 700, color: 'var(--lacivert)' }}>Sudoku taktikleri</h1>
           <p style={{ margin: 0, fontSize: 17, color: '#3B4A60' }}>Kolaydan Usta seviyeye, her adımda bir teknik. Yazıları sırayla okursan her seviyenin gerektirdiği yöntemi tam zamanında öğrenmiş olursun.</p>
         </header>
         <div className="taktik-liste">

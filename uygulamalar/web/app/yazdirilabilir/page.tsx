@@ -24,7 +24,7 @@ export default async function Yazdirilabilir() {
       <main className="sayfa iki-sutun" style={{ gap: 28 }}>
         <div className="ana-sutun">
           <header>
-            <h1 style={{ margin: '6px 0 10px', fontSize: 34, lineHeight: 1.15, fontWeight: 900, color: 'var(--lacivert)' }}>Çocuklar için yazdırılabilir sudoku</h1>
+            <h1 style={{ margin: '6px 0 10px', fontSize: 34, lineHeight: 1.15, fontWeight: 700, color: 'var(--lacivert)' }}>Çocuklar için yazdırılabilir sudoku</h1>
             <p style={{ margin: 0, fontSize: 17, color: '#3B4A60', maxWidth: 640 }}>Boyutu ve sayfa sayısını seç, PDF&apos;i indir ve yazdır. Ücretsiz, üyelik gerekmez. Her bulmacanın tek çözümü var ve tahmin gerektirmeden mantıkla çözülebiliyor.</p>
           </header>
           <section className="kart"><YazdirFormu /></section>

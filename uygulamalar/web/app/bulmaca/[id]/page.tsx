@@ -49,8 +49,8 @@ export default async function BulmacaSayfasi({ params }: { params: Promise<{ id:
           <section className="kart" style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}>
             <MiniIzgara bulmaca={b.bulmaca} boyut={180} />
             <div style={{ flex: '1 1 280px' }}>
-              {gunluk && <p style={{ margin: '0 0 6px', fontSize: 13, fontWeight: 800, color: 'var(--mavi)', letterSpacing: '.5px' }}>GÜNÜN SUDOKUSU · {gunluk.toLocaleUpperCase('tr')}</p>}
-              <h1 style={{ margin: '0 0 12px', fontSize: 32, fontWeight: 900, color: 'var(--lacivert)', lineHeight: 1.15 }}>Bulmaca #{b.id} · {ui.ad}</h1>
+              {gunluk && <p style={{ margin: '0 0 6px', fontSize: 13, fontWeight: 600, color: 'var(--mavi)', letterSpacing: '.5px' }}>GÜNÜN SUDOKUSU · {gunluk.toLocaleUpperCase('tr')}</p>}
+              <h1 style={{ margin: '0 0 12px', fontSize: 32, fontWeight: 700, color: 'var(--lacivert)', lineHeight: 1.15 }}>Bulmaca #{b.id} · {ui.ad}</h1>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 22px', fontSize: 14, color: 'var(--soluk)', marginBottom: 18 }}>
                 <span><strong style={{ color: 'var(--lacivert)', fontSize: 18 }}>{sayi(b.cozulme)}</strong> kişi çözdü</span>
                 <span>Ortalama <strong style={{ color: 'var(--lacivert)', fontSize: 18 }}>{sureMetni(b.ortalamaSure)}</strong></span>
@@ -58,7 +58,7 @@ export default async function BulmacaSayfasi({ params }: { params: Promise<{ id:
                 <span><strong style={{ color: 'var(--lacivert)', fontSize: 18 }}>{b.yorumSayisi}</strong> yorum</span>
               </div>
               {durum === 'bitti' ? (
-                <p className="bilgi" style={{ margin: 0 }}>Bu bulmacayı çözdün. <Link href={`/oyna/${b.seviye}`} style={{ fontWeight: 800 }}>Sıradaki {ui.ad} bulmacaya geç</Link></p>
+                <p className="bilgi" style={{ margin: 0 }}>Bu bulmacayı çözdün. <Link href={`/oyna/${b.seviye}`} style={{ fontWeight: 600 }}>Sıradaki {ui.ad} bulmacaya geç</Link></p>
               ) : (
                 <>
                   <Link className="ana-btn" href={`/oyna/${b.seviye}?bulmaca=${b.id}`}>{durum === 'yarim' ? 'Kaldığın yerden devam et' : 'Çözmeye başla'}</Link>
@@ -77,12 +77,12 @@ export default async function BulmacaSayfasi({ params }: { params: Promise<{ id:
                   <tbody>
                     {siralama.map((s) => (
                       <tr key={s.sira} className={s.benim ? 'ben' : undefined}>
-                        <td style={{ fontWeight: 900, color: s.sira === 1 ? '#8A4300' : undefined }}>{s.sira}</td>
-                        <td style={{ fontWeight: 800 }}>{s.ad}{s.misafir && <> <span className="etiket">Misafir</span></>}{s.benim && <> <span className="etiket" style={{ background: 'var(--acik)', color: 'var(--mavi)' }}>Sen</span></>}</td>
+                        <td style={{ fontWeight: 700, color: s.sira === 1 ? '#8A4300' : undefined }}>{s.sira}</td>
+                        <td style={{ fontWeight: 600 }}>{s.ad}{s.misafir && <> <span className="etiket">Misafir</span></>}{s.benim && <> <span className="etiket" style={{ background: 'var(--acik)', color: 'var(--mavi)' }}>Sen</span></>}</td>
                         <td style={{ color: 'var(--soluk)' }}>{s.yas ?? '—'}</td>
                         <td className="sure-yazi">{sureMetni(s.sure)}</td>
                         <td>{s.hata}</td>
-                        <td style={{ fontWeight: 900, color: 'var(--mavi)' }}>{sayi(s.puan)}</td>
+                        <td style={{ fontWeight: 700, color: 'var(--mavi)' }}>{sayi(s.puan)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -102,7 +102,7 @@ export default async function BulmacaSayfasi({ params }: { params: Promise<{ id:
               <div style={{ border: '1px dashed #B8C7DB', borderRadius: 14, padding: 16, background: '#FAFCFF', fontSize: 14, color: '#3B4A60' }}>
                 {oyuncu?.tip === 'uye'
                   ? 'Yorum yazmak için önce bu bulmacayı bitir. Böylece çözüm ipuçları sadece bitirenler arasında kalır.'
-                  : <>Yorum yazmak için bu bulmacayı bitirmiş ve <Link href="/kayit" style={{ fontWeight: 800 }}>üye</Link> olmalısın. Böylece çözüm ipuçları sadece bitirenler arasında kalır.</>}
+                  : <>Yorum yazmak için bu bulmacayı bitirmiş ve <Link href="/kayit" style={{ fontWeight: 600 }}>üye</Link> olmalısın. Böylece çözüm ipuçları sadece bitirenler arasında kalır.</>}
               </div>
             )}
             {yorumListesi.length === 0 && <p style={{ margin: 0, color: 'var(--soluk)' }}>Henüz yorum yok.</p>}

@@ -18,10 +18,10 @@ export async function HesapSayfasi({ sekme }: { sekme: 'kayit' | 'giris' }) {
       <UstMenu oyuncu={oyuncu} />
       <main className="sayfa iki-sutun" style={{ gap: 32 }}>
         <section style={{ flex: '1 1 300px', paddingTop: 12 }}>
-          <h1 style={{ margin: '0 0 14px', fontSize: 34, lineHeight: 1.15, fontWeight: 900, color: 'var(--lacivert)' }}>Skorların kaybolmasın.</h1>
+          <h1 style={{ margin: '0 0 14px', fontSize: 34, lineHeight: 1.15, fontWeight: 700, color: 'var(--lacivert)' }}>Skorların kaybolmasın.</h1>
           <ul style={{ listStyle: 'none', margin: '0 0 22px', padding: 0, display: 'flex', flexDirection: 'column', gap: 14, fontSize: 16 }}>
             {['Serin ve istatistiklerin her cihazda seninle', 'Bulmacalara yorum yaz, taktiğini paylaş', 'Sıralamada ad soyadınla ya da rumuzunla görün', 'Yakında: arkadaşlarını kullanıcı adıyla davet et'].map((m) => (
-              <li key={m} style={{ display: 'flex', gap: 12 }}><span style={{ width: 28, height: 28, flex: 'none', borderRadius: '50%', background: 'var(--mavi)', color: '#fff', display: 'grid', placeItems: 'center', fontWeight: 900, fontSize: 14 }} aria-hidden="true">✓</span>{m}</li>
+              <li key={m} style={{ display: 'flex', gap: 12 }}><span style={{ width: 28, height: 28, flex: 'none', borderRadius: '50%', background: 'var(--mavi)', color: '#fff', display: 'grid', placeItems: 'center', fontWeight: 700, fontSize: 14 }} aria-hidden="true">✓</span>{m}</li>
             ))}
           </ul>
           {misafirAdi && cozulen > 0 && <div style={{ padding: '14px 16px', borderRadius: 14, background: '#FFF6EC', border: '1px solid #F5D2AE', fontSize: 14, color: '#5A2E00' }}><strong>{misafirAdi}</strong> olarak çözdüğün {cozulen} bulmaca{ozet.seri ? ` ve ${ozet.seri} günlük serin` : ''} hesabına aktarılacak.</div>}

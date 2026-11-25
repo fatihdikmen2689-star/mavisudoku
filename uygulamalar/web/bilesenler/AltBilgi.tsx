@@ -5,7 +5,7 @@ export function AltBilgi() {
   return (
     <footer className="alt">
       <div className="alt-ic">
-        <span style={{ fontWeight: 900, color: 'var(--lacivert)' }}>Mavi<span style={{ color: 'var(--mavi)' }}>Sudoku</span> <span style={{ fontWeight: 700, color: 'var(--soluk)' }}>· {new Date().getFullYear()}</span></span>
+        <span style={{ fontWeight: 700, color: 'var(--lacivert)' }}>Mavi<span style={{ color: 'var(--mavi)' }}>Sudoku</span> <span style={{ fontWeight: 500, color: 'var(--soluk)' }}>· {new Date().getFullYear()}</span></span>
         <nav aria-label="Alt bilgi">
           <Link href="/hakkimizda">Hakkımızda</Link>
           <Link href="/iletisim">İletişim</Link>

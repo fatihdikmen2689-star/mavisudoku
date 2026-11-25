@@ -29,7 +29,7 @@ export default async function MacSayfasi({ params }: { params: Promise<{ id: str
       <>
         <UstMenu oyuncu={oyuncu} aktif="arkadas" />
         <main className="sayfa"><section className="kart" style={{ maxWidth: 560, margin: '30px auto', textAlign: 'center', padding: 36 }}>
-          <h1 style={{ margin: '0 0 10px', fontSize: 26, fontWeight: 900, color: 'var(--lacivert)' }}>{MESAJ[d.durum]}</h1>
+          <h1 style={{ margin: '0 0 10px', fontSize: 26, fontWeight: 700, color: 'var(--lacivert)' }}>{MESAJ[d.durum]}</h1>
           <Link className="ana-btn" href="/arkadas">Arkadaşla oyna sayfasına dön</Link>
         </section></main>
       </>

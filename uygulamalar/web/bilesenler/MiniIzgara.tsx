@@ -16,7 +16,7 @@ export function MiniIzgara({ bulmaca, boyut = 180, koyu = false }: { bulmaca: st
       <path d={cizgiler.join('')} stroke={ince} />
       <path d={kalinlar.join('')} stroke={kalin} strokeWidth="2.5" />
       {[...bulmaca].map((c, i) => c === '0' ? null : (
-        <text key={i} x={(i % n) * h + h / 2} y={Math.floor(i / n) * h + h / 2 + h * 0.18} textAnchor="middle" fontSize={h * 0.6} fontWeight="900" fill={yazi}>{c}</text>
+        <text key={i} x={(i % n) * h + h / 2} y={Math.floor(i / n) * h + h / 2 + h * 0.18} textAnchor="middle" fontSize={h * 0.6} fontWeight="700" fill={yazi}>{c}</text>
       ))}
     </svg>
   );

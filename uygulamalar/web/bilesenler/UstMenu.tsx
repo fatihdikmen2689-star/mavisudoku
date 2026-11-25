@@ -22,9 +22,9 @@ export function Logo() {
       <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
         <rect x="1" y="1" width="32" height="32" rx="8" fill="#2F7BF5" />
         <path d="M12 1v32M22 1v32M1 12h32M1 22h32" stroke="#0B2545" strokeWidth="1.5" />
-        <text x="17" y="22" textAnchor="middle" fontSize="13" fontWeight="900" fill="#fff">9</text>
+        <text x="17" y="22" textAnchor="middle" fontSize="13" fontWeight="700" fill="#fff">9</text>
       </svg>
-      <b style={{ fontWeight: 900 }}>Mavi<span>Sudoku</span></b>
+      <b style={{ fontWeight: 700 }}>Mavi<span>Sudoku</span></b>
     </Link>
   );
 }

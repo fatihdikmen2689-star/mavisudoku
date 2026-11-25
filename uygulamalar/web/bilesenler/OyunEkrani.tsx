@@ -291,7 +291,7 @@ export function OyunEkrani({ seviye, bulmacaId, ozet, uye, mac }: { seviye: Sevi
                   <div style={{ flex: '1 1 240px' }}><p className="b" id="ipucu-baslik">{ipucuMetni[0]}</p><p className="m">{ipucuMetni[1]}</p></div>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button type="button" onClick={ipucuKapat} style={{ border: '1px solid #4E73A6', background: 'transparent', color: '#fff' }}>Geç</button>
-                    <button type="button" onClick={() => (ipucuAdimi >= 3 ? ipucuKapat() : setIpucuAdimi(ipucuAdimi + 1))} style={{ border: 0, background: '#fff', color: 'var(--lacivert)', fontWeight: 800 }}>{ipucuAdimi >= 3 ? 'Anladım' : 'İleri'}</button>
+                    <button type="button" onClick={() => (ipucuAdimi >= 3 ? ipucuKapat() : setIpucuAdimi(ipucuAdimi + 1))} style={{ border: 0, background: '#fff', color: 'var(--lacivert)', fontWeight: 600 }}>{ipucuAdimi >= 3 ? 'Anladım' : 'İleri'}</button>
                   </div>
                 </div>
               )}
@@ -459,7 +459,7 @@ function MacSonucu({ durum, rakip }: { durum: MacDurumu | null; rakip: string })
   return (
     <section className={`kart genislik`} role="status" aria-live="polite" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between', borderColor: s === 'kazandin' ? '#5BC48A' : undefined, borderWidth: 2 }}>
       <div>
-        <strong style={{ display: 'block', fontSize: 24, fontWeight: 900, color: 'var(--lacivert)' }}>{baslik}</strong>
+        <strong style={{ display: 'block', fontSize: 24, fontWeight: 700, color: 'var(--lacivert)' }}>{baslik}</strong>
         {alt && <span style={{ fontSize: 14, color: 'var(--soluk)' }}>{alt}</span>}
       </div>
       <Link className="btn-mavi" style={{ minHeight: 46, padding: '0 20px' }} href={`/arkadas?rakip=${encodeURIComponent(rakip)}`}>Rövanş</Link>

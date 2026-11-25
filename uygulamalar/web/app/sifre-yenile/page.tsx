@@ -16,7 +16,7 @@ export default async function SifreYenile({ searchParams }: { searchParams: Prom
       <UstMenu oyuncu={await mevcutOyuncu()} />
       <main className="sayfa">
         <section className="kart" style={{ maxWidth: 480, margin: '20px auto', padding: 28 }}>
-          <h1 style={{ margin: '0 0 8px', fontSize: 26, fontWeight: 900, color: 'var(--lacivert)' }}>Yeni şifre belirle</h1>
+          <h1 style={{ margin: '0 0 8px', fontSize: 26, fontWeight: 700, color: 'var(--lacivert)' }}>Yeni şifre belirle</h1>
           {gecerli ? <YeniSifreFormu jeton={jeton!} /> : (
             <div className="form">
               <p className="uyari" style={{ margin: 0 }}>Bu bağlantı geçersiz, kullanılmış ya da süresi dolmuş.</p>

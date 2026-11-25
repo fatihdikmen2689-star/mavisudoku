@@ -51,7 +51,7 @@ export default async function TaktikSayfasi({ params }: { params: Promise<{ slug
             </div>
             <Link className="ana-btn" href={`/oyna/${t.seviye}`}>{SEVIYE_UI[t.seviye].ad} bulmaca çöz</Link>
           </div>
-          {sonraki && <p style={{ marginTop: 18 }}>Sıradaki teknik: <Link href={`/taktikler/${sonraki.slug}`} style={{ fontWeight: 800 }}>{sonraki.baslik}</Link></p>}
+          {sonraki && <p style={{ marginTop: 18 }}>Sıradaki teknik: <Link href={`/taktikler/${sonraki.slug}`} style={{ fontWeight: 600 }}>{sonraki.baslik}</Link></p>}
         </article>
         <aside className="yan-sutun">
           <section className="kart">

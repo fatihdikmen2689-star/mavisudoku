@@ -31,7 +31,7 @@ export default async function AnaSayfa() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <Link className="ana-btn" href={`/oyna/${sonSeviye}`}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-                Hemen oyna <span style={{ fontSize: 14, fontWeight: 800, color: '#5A2E00' }}>· {SEVIYE_UI[sonSeviye].ad}</span>
+                Hemen oyna <span style={{ fontSize: 14, fontWeight: 600, color: '#5A2E00' }}>· {SEVIYE_UI[sonSeviye].ad}</span>
               </Link>
             </div>
             {ozet.yarim && (
@@ -46,7 +46,7 @@ export default async function AnaSayfa() {
           </div>
           <Link className="hero-sag" href={`/bulmaca/${gunlukId}`} aria-label={`Günün sudokusu: ${SEVIYE_UI[gunluk.seviye].ad}`}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
-              <span style={{ fontSize: 20, fontWeight: 900 }}>Günün Sudokusu</span>
+              <span style={{ fontSize: 20, fontWeight: 700 }}>Günün Sudokusu</span>
               <span className="rozet" style={{ background: 'var(--mavi)' }}>{SEVIYE_UI[gunluk.seviye].ad}</span>
             </div>
             <div style={{ alignSelf: 'center', width: '100%', maxWidth: 230 }}><MiniIzgara bulmaca={gunluk.bulmaca} boyut={230} koyu /></div>
@@ -54,13 +54,13 @@ export default async function AnaSayfa() {
               <span><strong style={{ color: '#fff', fontSize: 18 }}>{sayi(gunluk.cozulme)}</strong> kişi çözdü</span>
               <span>Rekor <strong style={{ color: '#fff', fontSize: 18 }}>{sureMetni(gunluk.rekor)}</strong></span>
             </div>
-            <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 48, borderRadius: 12, background: 'var(--mavi-acik)', fontWeight: 900 }}>Günün sudokusunu çöz</span>
+            <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 48, borderRadius: 12, background: 'var(--mavi-acik)', fontWeight: 700 }}>Günün sudokusunu çöz</span>
           </Link>
         </section>
 
         <section id="seviyeler" aria-labelledby="seviye-baslik">
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, marginBottom: 14 }}>
-            <h2 id="seviye-baslik" style={{ margin: 0, fontSize: 24, fontWeight: 900, color: 'var(--lacivert)' }}>Seviyeni seç</h2>
+            <h2 id="seviye-baslik" style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--lacivert)' }}>Seviyeni seç</h2>
             <span style={{ fontSize: 14, color: 'var(--soluk)' }}>Her seviyede daha önce çözmediğin bir bulmaca gelir</span>
           </div>
           <div className="seviye-izgara">
@@ -72,7 +72,7 @@ export default async function AnaSayfa() {
                   <b>{SEVIYE_UI[s].ad}</b>
                   <small>{SEVIYE_UI[s].aciklama}</small>
                   <small>{o ? `${o.cozulen} çözüldü · en iyi ${sureMetni(o.enIyi)}` : 'Henüz çözmedin'}</small>
-                  <span style={{ marginTop: 6, fontWeight: 900, fontSize: 14, color: 'var(--mavi)' }}>Oyna</span>
+                  <span style={{ marginTop: 6, fontWeight: 700, fontSize: 14, color: 'var(--mavi)' }}>Oyna</span>
                 </Link>
               );
             })}
@@ -96,7 +96,7 @@ export default async function AnaSayfa() {
                 ))}
               </ol>
             ) : <p style={{ margin: 0, color: 'var(--soluk)' }}>Bugün henüz kimse çözmedi. İlk sen ol!</p>}
-            <Link href={`/bulmaca/${gunlukId}`} style={{ display: 'inline-block', marginTop: 12, fontWeight: 800, fontSize: 14, padding: '8px 0' }}>Sıralama ve yorumlar</Link>
+            <Link href={`/bulmaca/${gunlukId}`} style={{ display: 'inline-block', marginTop: 12, fontWeight: 600, fontSize: 14, padding: '8px 0' }}>Sıralama ve yorumlar</Link>
           </div>
           <div className="kart" style={{ flex: '1 1 380px' }}>
             <h2>Sudoku öğren</h2>

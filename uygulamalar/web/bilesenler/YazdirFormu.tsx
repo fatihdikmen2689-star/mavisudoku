@@ -19,7 +19,7 @@ export function YazdirFormu() {
     }}>
       <input ref={tohum} type="hidden" name="tohum" defaultValue="" />
       <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
-        <legend style={{ fontWeight: 800, marginBottom: 8, color: 'var(--lacivert)' }}>Bulmaca boyutu</legend>
+        <legend style={{ fontWeight: 600, marginBottom: 8, color: 'var(--lacivert)' }}>Bulmaca boyutu</legend>
         <div className="secim-izgara">
           {([4, 6] as const).map((b) => (
             <label key={b} className="secim">
@@ -40,7 +40,7 @@ export function YazdirFormu() {
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
         <button type="submit" className="ana-btn">PDF&apos;i indir</button>
-        {indirildi && <span role="status" style={{ fontSize: 14, color: 'var(--yesil)', fontWeight: 700 }}>İndirme başladı. Her indirmede yeni bulmacalar gelir.</span>}
+        {indirildi && <span role="status" style={{ fontSize: 14, color: 'var(--yesil)', fontWeight: 500 }}>İndirme başladı. Her indirmede yeni bulmacalar gelir.</span>}
       </div>
     </form>
   );
