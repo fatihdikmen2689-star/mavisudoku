@@ -13,6 +13,7 @@ const scryptP = promisify(scrypt) as (sifre: string, tuz: Buffer, uzunluk: numbe
 
 export const OTURUM_GUN = 30;
 export const MISAFIR_GUNLUK_IP_SINIRI = 30;
+export const MOBIL_MISAFIR_GUNLUK_IP_SINIRI = 500;
 
 export type Oyuncu =
   | { tip: 'uye'; id: number; rumuz: string; ad: string; soyad: string }
@@ -45,11 +46,12 @@ export async function sifreDogrula(sifre: string, kayitli: string): Promise<bool
 
 // ---------------- Misafir ----------------
 
-export async function misafirOlustur(db: Veritabani, ip: string): Promise<{ oyuncu: Oyuncu; jeton: string }> {
+/** sinir: IP başına günlük misafir sayısı (mobil operatörlerde çok kullanıcı aynı IP'yi paylaştığı için uygulamada daha yüksek) */
+export async function misafirOlustur(db: Veritabani, ip: string, sinir = MISAFIR_GUNLUK_IP_SINIRI): Promise<{ oyuncu: Oyuncu; jeton: string }> {
   const ipOzet = ozet('ip:' + ip);
   const [{ sayi }] = await db.sorgu<{ sayi: number }>(
     `SELECT count(*)::int AS sayi FROM misafirler WHERE ip_ozet = $1 AND olusturma > now() - interval '1 day'`, [ipOzet]);
-  if (sayi >= MISAFIR_GUNLUK_IP_SINIRI) throw new KimlikHatasi('Bu bağlantıdan bugün çok fazla misafir oluşturuldu. Lütfen kayıt ol veya yarın tekrar dene.');
+  if (sayi >= sinir) throw new KimlikHatasi('Bu bağlantıdan bugün çok fazla misafir oluşturuldu. Lütfen kayıt ol veya yarın tekrar dene.');
   const jeton = jetonUret();
   for (let deneme = 0; deneme < 20; deneme++) {
     const basamak = deneme < 10 ? 4 : 6;

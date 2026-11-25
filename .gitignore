@@ -9,3 +9,12 @@ veri/pglite/
 *.tsbuildinfo
 next-env.d.ts
 !.env.example
+uygulamalar/mobil/.expo/
+uygulamalar/mobil/ios/
+uygulamalar/mobil/android/
+uygulamalar/mobil/dist/
+*.jks
+*.p8
+*.p12
+*.keystore
+*.mobileprovision

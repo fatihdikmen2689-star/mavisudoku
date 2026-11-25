@@ -3,7 +3,7 @@
 Türkçe, ücretsiz, reklamla desteklenen sudoku sitesi ve mobil uygulaması.
 Kararların tamamı **MaviSudoku – Proje Özeti** dokümanında, ekran tasarımları **MaviSudoku – Web ve Mobil Tasarım** tuvalindedir.
 
-## Durum: 5. adım tamamlandı
+## Durum: 6. adım tamamlandı
 
 | Parça | Durum |
 |---|---|
@@ -25,7 +25,7 @@ Kararların tamamı **MaviSudoku – Proje Özeti** dokümanında, ekran tasarı
 | Reklamlar ve çerez onayı | ✅ AdSense kodları `.env` ile girilir. Çerez tercihi yapılana kadar reklam istenmez; "Yalnızca gerekli" seçilirse kişiselleştirilmemiş reklam. Google onay modu sinyalleri, `ads.txt`, alt bilgide "Çerez tercihlerim". Yazdırılabilir (çocuk) sayfasında reklam yok |
 | Yasal metinler | ⏳ "Yakında" sayfası; yayından önce avukat kontrolüyle |
 | Arkadaşınla oyna (`/arkadas`, `/mac/[id]`) | ✅ Yalnızca üyeler; rumuzla davet (10 dk geçerli), 5 sn geri sayım, ikisinin de açmadığı aynı bulmaca, rakibin ilerlemesi canlı, ilk doğru çözen kazanır. Menüde davet rozeti ve her sayfada davet bildirimi. Maçta ipucu ve duraklatma yok; süreler bulmacanın sıralamasına girer. Kötüye kullanıma karşı: saatte 20 davet, aynı kişi günde 3 kez reddederse yeni davet yok |
-| Mobil uygulama | ⏳ 6. adım |
+| Mobil uygulama (`uygulamalar/mobil`) | ✅ Expo ile Android + iPhone: ana sayfa, oyun, sonuç, bulmaca sıralaması ve yorumlar, genel sıralama, giriş/kayıt, profil, uygulama içinde hesap silme. Aynı sunucu ve hesaplar. AdMob (onay formu, şerit + seyrek tam ekran reklam, çocuk seviyelerinde reklam yok). Ayrıntılar: `uygulamalar/mobil/README.md` |
 
 ## Web sitesini çalıştırma
 

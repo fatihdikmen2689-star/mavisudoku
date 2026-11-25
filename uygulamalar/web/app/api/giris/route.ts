@@ -1,7 +1,7 @@
 import { veritabani } from '../../../sunucu/db.ts';
 import { girisYap, oturumAc, misafirAktar } from '../../../sunucu/kimlik.ts';
 import { OyunHatasi } from '../../../sunucu/oyun.ts';
-import { mevcutOyuncu, kaynakKontrol, govde, hataYaniti, oturumCereziYaz, cerezleriTemizle, MISAFIR_CEREZ, ipAl } from '../../../sunucu/istek.ts';
+import { mevcutOyuncu, kaynakKontrol, govde, hataYaniti, oturumCereziYaz, cerezleriTemizle, MISAFIR_CEREZ, ipAl, mobilIstek } from '../../../sunucu/istek.ts';
 
 /** Basit kaba kuvvet koruması: IP başına 15 dakikada en fazla 10 başarısız deneme (sunucu belleğinde) */
 const denemeler = new Map<string, { sayi: number; bitis: number }>();
@@ -24,7 +24,10 @@ export async function POST(istek: Request) {
     const onceki = await mevcutOyuncu();
     let aktarilan = 0;
     if (onceki?.tip === 'misafir' && g.aktar !== false) aktarilan = await misafirAktar(db, onceki.id, uye.id);
-    await oturumCereziYaz(await oturumAc(db, uye.id));
+    const jeton = await oturumAc(db, uye.id);
+    // Mobil uygulama jetonu kendisi saklar; web sitesine çerez yazılır
+    if (await mobilIstek(istek)) return Response.json({ tamam: true, aktarilan, jeton, oyuncu: { tip: 'uye', ad: uye.tip === 'uye' ? uye.rumuz : '' } });
+    await oturumCereziYaz(jeton);
     if (onceki?.tip === 'misafir') await cerezleriTemizle(MISAFIR_CEREZ);
     return Response.json({ tamam: true, aktarilan });
   } catch (e) {

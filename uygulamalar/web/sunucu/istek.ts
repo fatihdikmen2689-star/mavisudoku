@@ -1,7 +1,7 @@
 /**
  * İstek yardımcıları: çerezler, mevcut oyuncu, güvenlik kontrolleri, hata yanıtları.
  */
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { veritabani } from './db.ts';
 import { oturumBul, misafirBul, misafirOlustur, KimlikHatasi, OTURUM_GUN } from './kimlik.ts';
 import type { Oyuncu } from './kimlik.ts';
@@ -14,11 +14,29 @@ const cerezAyari = (gun: number) => ({
   httpOnly: true, sameSite: 'lax' as const, secure: process.env.NODE_ENV === 'production', path: '/', maxAge: gun * 86400,
 });
 
-/** Giriş yapmış üye ya da çerezi olan misafir (yoksa null). Sayfalarda kullanılabilir; çerez yazmaz. */
-export async function mevcutOyuncu(): Promise<Oyuncu | null> {
+/**
+ * Oturum ve misafir jetonları. Web sitesi çerez kullanır; mobil uygulama çerez yerine
+ * "Authorization: Bearer uye.<jeton>" ya da "Bearer misafir.<jeton>" başlığı gönderir.
+ * Başlık varsa çerezlere bakılmaz.
+ */
+export async function jetonlar(): Promise<{ oturum?: string; misafir?: string; mobil: boolean }> {
+  const yetki = (await headers()).get('authorization');
+  const m = yetki && /^Bearer (uye|misafir)\.([\w-]{20,100})$/.exec(yetki.trim());
+  if (yetki) return m ? { [m[1] === 'uye' ? 'oturum' : 'misafir']: m[2], mobil: true } : { mobil: true };
   const c = await cookies();
+  return { oturum: c.get(OTURUM_CEREZ)?.value, misafir: c.get(MISAFIR_CEREZ)?.value, mobil: false };
+}
+
+/** Giriş yapmış üye ya da misafir (yoksa null). Sayfalarda kullanılabilir; çerez yazmaz. */
+export async function mevcutOyuncu(): Promise<Oyuncu | null> {
+  const j = await jetonlar();
   const db = await veritabani();
-  return (await oturumBul(db, c.get(OTURUM_CEREZ)?.value)) ?? (await misafirBul(db, c.get(MISAFIR_CEREZ)?.value));
+  return (await oturumBul(db, j.oturum)) ?? (await misafirBul(db, j.misafir));
+}
+
+/** Mobil uygulamadan gelen istek mi (jeton yanıtta döner, çerez yazılmaz) */
+export async function mobilIstek(istek: Request): Promise<boolean> {
+  return istek.headers.get('x-istemci') === 'mobil' || (await jetonlar()).mobil;
 }
 
 /** Yalnızca API uçlarında: oyuncu yoksa yeni misafir oluşturur ve çerezini yazar. */
